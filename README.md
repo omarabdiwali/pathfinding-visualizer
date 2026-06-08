@@ -1,40 +1,124 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+# Pathfinding Visualizer
+
+A web-based interactive visualization tool for popular search algorithms including Dijkstra's Algorithm, A*, Bi-directional BFS, DFS, and Greedy Best-First Search.
+
+**https://visualizer-path.vercel.app**
+
+## Features
+
+- **Multiple Algorithms**: Visualize and compare different pathfinding algorithms
+  - Dijkstra's Algorithm
+  - A* (A-Star)
+  - Bi-directional BFS
+  - Depth First Search (DFS)
+  - Greedy Best-First Search (Greedy BFS)
+
+- **Interactive Grid Manipulation**
+  - Place and move **Start** and **End** nodes
+  - Add **Walls** to create obstacles
+  - Set **Checkpoints** for multi-destination pathfinding
+  - Modify **Edge Costs** between adjacent nodes
+  - Use **Eraser** to remove cells
+
+- **Real-time Visualization**
+  - Watch algorithms explore nodes in real-time
+  - Color-coded cells for different states (start, end, walls, explored, path)
+  - Visual feedback with different colors for even/odd grid positions
+
+- **Detailed Results**
+  - Nodes visited count
+  - Number of moves/steps
+  - Total path cost
+  - Path existence indicator
+
+- **Responsive Design**
+  - Automatically resizes grid based on window dimensions
+  - Clean, modern UI with intuitive controls
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+- Node.js installed on your system
+- A modern web browser
 
+### Installation
 ```bash
+# Clone the repository
+git clone https://github.com/omarabdiwali/pathfinding-visualizer.git
+
+# Install dependencies
+npm install
+
+# Run the development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+## How to Use
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+### Setting Up the Grid
+1. **Start Node**: Click the "Start" button, then click on a grid cell to place the start position
+2. **End Node**: Click the "End" button, then click on a grid cell to place the end position
+3. **Walls**: Click the "Wall" button, then click and drag to add/remove obstacles
+4. **Checkpoints**: Click the "Checkpoint" button to add intermediate destinations
+5. **Edge Costs**: Click the "Cost" button to modify traversal costs between adjacent nodes (click a cell, then click a neighbor to adjust cost with Shift to decrease)
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
+### Running Algorithms
+1. Set up your grid with start, end, and optional walls/checkpoints
+2. Click any algorithm button (Dijkstra, Bi-BFS, DFS, Greedy BFS, or A*)
+3. Watch the visualization run in real-time
+4. Press the red "Stop" button to halt execution if needed
 
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Clearing the Grid
+- **Clear Path**: Removes visualization markings but keeps walls and nodes
+- **Clear All**: Resets the entire grid to its initial state
+- **Reset Costs**: Resets all edge costs to default values (1)
 
-## Learn More
+## Algorithm Descriptions
 
-To learn more about Next.js, take a look at the following resources:
+### Dijkstra's Algorithm
+Finds the shortest path from start to end by exploring all neighbors at the present depth before moving to nodes at the next depth level. Guarantees the optimal solution.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
+### A* (A-Star)
+An informed search algorithm that uses heuristics to guide the search toward the goal. More efficient than Dijkstra as it prioritizes paths that appear to lead closer to the target.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Bi-directional BFS
+Runs two simultaneous breadth-first searches - one from the start node and one from the end node - until they meet. Can be faster than standard BFS in some cases.
 
-## Deploy on Vercel
+### Depth First Search (DFS)
+Explores as far as possible along each branch before backtracking. Does not guarantee the shortest path.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Greedy Best-First Search
+Uses only the heuristic function to determine which node to explore next, without considering the cost so far. Not guaranteed to find the optimal path.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+## Tech Stack
+
+- **Frontend**: Next.js
+- **Styling**: Tailwind CSS
+- **Algorithms**: Custom implementations in JavaScript
+
+## Project Structure
+
+```
+search-algorithms/
+├── pages/
+│   └── index.js          # Main application component
+├── algorithms/
+│   ├── utils/
+│   │   └── constants.js  # Constants and utility functions
+│   ├── di-bfs.js         # Bi-directional BFS implementation
+│   ├── greedy-bfs.js     # Greedy BFS implementation
+│   ├── dijkstra.js       # Dijkstra's algorithm
+│   ├── astar.js          # A* algorithm
+│   └── dfs.js            # Depth First Search
+└── README.md
+```
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit pull requests or open issues for bug fixes and feature enhancements.
+
+## License
+
+This project is open source and available under the MIT License.
