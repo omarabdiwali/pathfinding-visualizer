@@ -8,7 +8,6 @@ export const NEXT = 'bg-green-500';
 export const EXPLORED = 'bg-red-500';
 export const POINT = 'bg-blue-500';
 export const CURRENT = 'bg-blue-800';
-export const BASE_CLASS = "min-w-[20px] max-w-[20px] min-h-[20px] max-h-[20px] flex items-center justify-center text-xs select-none cursor-default border border-slate-700";
 export const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 export let continueRunning = true;
 
@@ -88,13 +87,11 @@ export const clearGrid = (width, height, keepNodes) => {
         if (keepNodes) {
             const classes = el.classList;
             if (classes.contains(EXPLORED) || classes.contains(NEXT) || classes.contains(PATH) || classes.contains(CURRENT)) {
-                // el.className = BASE_CLASS;
                 removePreviousColor(el);
                 i % 2 == 0 ? el.classList.add(EMPTY_EVEN) : el.classList.add(EMPTY_ODD);
             }
         } else {
             removePreviousColor(el);
-            // el.className = BASE_CLASS;
             i % 2 == 0 ? el.classList.add(EMPTY_EVEN) : el.classList.add(EMPTY_ODD);
         }
     }

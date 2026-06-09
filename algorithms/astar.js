@@ -14,30 +14,6 @@ const getHeuristic = (current, target, width) => {
     return movesFrom;
 }
 
-const getNextValue = (positions, target, width) => {
-    let nextIndex = 0;
-    let [currentPos, movesMade] = positions.at(nextIndex);
-    let heuristicValue = movesMade + getHeuristic(currentPos, target, width);
-
-    for (let i = 1; i < positions.length; i++) {
-        [currentPos, movesMade] = positions.at(i);
-        let curHeuristicVal = movesMade + getHeuristic(currentPos, target, width);
-        if (curHeuristicVal < heuristicValue) {
-            heuristicValue = curHeuristicVal;
-            nextIndex = i;
-        } 
-        else if (curHeuristicVal == heuristicValue) {
-            const [topPos, _] = positions.at(nextIndex);
-            if (getHeuristic(currentPos, target, width) < getHeuristic(topPos, target, width)) {
-                heuristicValue = curHeuristicVal;
-                nextIndex = i;
-            }
-        }
-    }
-
-    return nextIndex;
-}
-
 /**
  * A*
  * @param {Array<number>} positions 
@@ -109,7 +85,7 @@ export const aStar = async (positions, width, height, costs) => {
         removeNextColors(frontier.heap.map((val) => val.element));
         moveCount += path.length - 1;
         totalCost += getPathCost(path, costs);
-        // moveCount += getPathCost(path, costs);
+
         await drawPath(path, startNode, targetNode);
         index < positions.length - 1 && removeExploredNodes(costSoFar.keys());
     }

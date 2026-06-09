@@ -1,4 +1,4 @@
-import { CURRENT, EMPTY_EVEN, EMPTY_ODD, END, EXPLORED, NEXT, PATH, POINT, START, WALL, clearGrid, getNeighbors, toggleBackdrop, updateRunning } from "@/algorithms/utils/constants";
+import { CURRENT, EMPTY_EVEN, EMPTY_ODD, END, EXPLORED, NEXT, PATH, POINT, START, WALL, clearGrid, getKey, getNeighbors, toggleBackdrop, updateRunning } from "@/algorithms/utils/constants";
 import { biDirectionalBFS } from "@/algorithms/bi-bfs";
 import { greedyBFS } from "@/algorithms/greedy-bfs";
 import { dijkstraAlgorithm } from "@/algorithms/dijkstra";
@@ -19,6 +19,7 @@ export default function Home() {
   const [focused, setFocused] = useState(null);
   const [costs, setCosts] = useState({});
   const [focusNeighbors, setFocusNeighbors] = useState([]);
+  const prevWidth = useRef(0);
 
   const gridRef = useRef(null);
   const intervalRef = useRef(null);
@@ -191,7 +192,7 @@ export default function Home() {
 
       if (focusNeighbors.includes(newPos)) {
         const costsCopy = { ...costs };
-        const key = focused < newPos ? `${focused}-${newPos}` : `${newPos}-${focused}`;
+        const key = getKey(focused, newPos);
         const currentCost = key in costsCopy ? costsCopy[key] : 1;
         costsCopy[key] = e.shiftKey ? Math.max(1, currentCost - 1) : currentCost + 1;
         setCosts(costsCopy);
@@ -216,29 +217,45 @@ export default function Home() {
   }
 
   useEffect(() => {
+    let timeoutId = null;
     const onResize = (onStart=false) => {
-      let newWidth = Math.floor(window.innerWidth / 20);
-      let newHeight = Math.floor(window.innerHeight / 24);
-      newWidth = newWidth % 2 == 0 ? newWidth - 1 : newWidth;
-      newHeight = newHeight % 2 == 0 ? newHeight - 1 : newHeight;
+      if (prevWidth.current == window.innerWidth) return;
+      
+      const resizeFunction = () => {
+        let newWidth = Math.floor(window.innerWidth / 20);
+        let newHeight = Math.floor(window.innerHeight / 24);
+        newWidth = newWidth % 2 == 0 ? newWidth - 1 : newWidth;
+        newHeight = newHeight % 2 == 0 ? newHeight - 1 : newHeight;
 
-      if (onStart) {
+        if (onStart) {
+          setWidth(newWidth);
+          setHeight(newHeight);
+        }
+        
+        updateRunning(false);
+        
+        setRunning(false);
+        setStartPos(null);
+        setEndPos(null);
+        setCheckpoints([]);
+        setFocused(null);
+        setFocusNeighbors([]);
+        
+        toggleBackdrop(newWidth, newHeight, false);
+        setCosts({});
         setWidth(newWidth);
         setHeight(newHeight);
+        clearGrid(newWidth, newHeight, false);
+        prevWidth.current = window.innerWidth;
       }
-      
-      updateRunning(false);
-      setRunning(false);
-      setStartPos(null);
-      setEndPos(null);
-      setCheckpoints([]);
-      setFocused(null);
-      setFocusNeighbors([]);
-      toggleBackdrop(newWidth, newHeight, false);
-      setCosts({});
-      setWidth(newWidth);
-      setHeight(newHeight);
-      clearGrid(newWidth, newHeight, false);
+
+      if (onStart) {
+        resizeFunction();
+        return;
+      }
+
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(resizeFunction, 150)
     }
 
     onResize(true);
@@ -427,7 +444,7 @@ export default function Home() {
                   const uniqPos = counterStart + col;
                   const index = checkpoints.indexOf(counterStart + col);
                   const className = `min-w-[20px] max-w-[20px] min-h-[20px] max-h-[20px] flex items-center justify-center text-xs select-none cursor-default border border-slate-700 ${uniqPos % 2 === 0 ? EMPTY_EVEN : EMPTY_ODD}`;
-                  const key = focused != null ? focused < uniqPos ? `${focused}-${uniqPos}` : `${uniqPos}-${focused}` : '';
+                  const key = focused != null ? getKey(focused, uniqPos) : '';
                   const currentCost = focusNeighbors.includes(uniqPos) ? key in costs ? costs[key] : 1 : '';
 
                   return (

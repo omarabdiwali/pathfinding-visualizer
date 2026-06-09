@@ -78,28 +78,3 @@ export const dijkstraAlgorithm = async (nodePositions, width, height, costs) => 
         totalCost
     }
 }
-
-
-        // while (queue.length > 0 && continueRunning) {
-        //     traversed += 1;
-        //     let currentPos = queue.shift();
-        //     changeElColor(prevPos, EXPLORED);
-        //     changeElColor(currentPos, CURRENT);
-
-        //     if (currentPos == targetNode) {
-        //         pathFound = reconstructPath(parentMap, targetNode);
-        //         break;
-        //     }
-
-        //     const neighbors = getNeighbors(currentPos, width, height, true);
-        //     for (const nextPos of neighbors) {
-        //         if (passed.has(nextPos)) continue;
-        //         passed.add(nextPos);
-        //         parentMap.set(nextPos, currentPos);
-        //         queue.push(nextPos);
-        //         nextPos !== targetNode && changeElColor(nextPos, NEXT);
-        //     }
-
-        //     prevPos = currentPos;
-        //     await sleep(1);
-        // }

@@ -37,7 +37,6 @@ export const depthFirstSearch = async (positions, width, height, costs) => {
                 break;
             }
 
-
             const neighbors = getNeighbors(currentPos, width, height, true);
             for (const nextPos of neighbors) {
                 if (passed.has(nextPos)) continue;
