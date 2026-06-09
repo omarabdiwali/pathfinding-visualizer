@@ -1,5 +1,5 @@
 import { CURRENT, EMPTY_EVEN, EMPTY_ODD, END, EXPLORED, NEXT, PATH, POINT, START, WALL, clearGrid, getNeighbors, toggleBackdrop, updateRunning } from "@/algorithms/utils/constants";
-import { idkwhattocallthis } from "@/algorithms/di-bfs";
+import { biDirectionalBFS } from "@/algorithms/bi-bfs";
 import { greedyBFS } from "@/algorithms/greedy-bfs";
 import { dijkstraAlgorithm } from "@/algorithms/dijkstra";
 import { useEffect, useRef, useState } from "react";
@@ -46,7 +46,7 @@ export default function Home() {
     setResult('');
     setRunning(true);
     const positions = [startPos, ...checkpoints, endPos];
-    const func = algo == 'dijkstra' ? dijkstraAlgorithm : algo == 'bi' ? idkwhattocallthis 
+    const func = algo == 'dijkstra' ? dijkstraAlgorithm : algo == 'bi' ? biDirectionalBFS 
       : algo == 'greedy' ? greedyBFS : algo == 'aStar' ? aStar : depthFirstSearch;
 
     func(positions, width, height, costs).then(res => {

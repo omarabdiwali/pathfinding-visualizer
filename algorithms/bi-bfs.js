@@ -1,12 +1,12 @@
 import { EXPLORED, NEXT, sleep, changeElColor, clearGrid, drawPath, getNeighbors, reconstructPath, removeNextColors, continueRunning, removeExploredNodes, getPathCost } from "./utils/constants";
 
 /**
- * idkwhattocallthis
+ * Bi-directional BFS
  * @param {Array<number>} positions 
  * @param {number} width 
  * @param {number} height 
  */
-export const idkwhattocallthis = async (positions, width, height, costs) => {
+export const biDirectionalBFS = async (positions, width, height, costs) => {
     clearGrid(width, height, true);
     let index = 0;
     let traversed = 0;
