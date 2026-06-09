@@ -4,6 +4,8 @@ A web-based interactive visualization tool for popular search algorithms includi
 
 **https://visualizer-path.vercel.app**
 
+![Home Page](https://i.imgur.com/uN6aXHB.png)
+
 ## Features
 
 - **Multiple Algorithms**: Visualize and compare different pathfinding algorithms
@@ -24,6 +26,8 @@ A web-based interactive visualization tool for popular search algorithms includi
   - Watch algorithms explore nodes in real-time
   - Color-coded cells for different states (start, end, walls, explored, path)
   - Visual feedback with different colors for even/odd grid positions
+
+![Visualization](https://i.imgur.com/ZlmFRON.png)
 
 - **Detailed Results**
   - Nodes visited count
@@ -62,7 +66,9 @@ Open [http://localhost:3000](http://localhost:3000) in your browser to see the a
 2. **End Node**: Click the "End" button, then click on a grid cell to place the end position
 3. **Walls**: Click the "Wall" button, then click and drag to add/remove obstacles
 4. **Checkpoints**: Click the "Checkpoint" button to add intermediate destinations
-5. **Edge Costs**: Click the "Cost" button to modify traversal costs between adjacent nodes (click a cell, then click a neighbor to adjust cost with Shift to decrease)
+5. **Edge Costs**: Click the "Cost" button to modify traversal costs between adjacent nodes (click a cell, then click a neighbor to adjust cost with `Shift` to decrease)
+
+![Edge Costs](https://i.imgur.com/U2JJqyN.png)
 
 ### Running Algorithms
 1. Set up your grid with start, end, and optional walls/checkpoints
