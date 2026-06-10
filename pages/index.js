@@ -5,6 +5,7 @@ import { dijkstraAlgorithm } from "@/algorithms/dijkstra";
 import { useEffect, useRef, useState } from "react";
 import { aStar } from "@/algorithms/astar";
 import { depthFirstSearch } from "@/algorithms/dfs";
+import HelpModal from "@/algorithms/utils/HelpModal";
 
 export default function Home() {
   const [startPos, setStartPos] = useState(null);
@@ -19,6 +20,8 @@ export default function Home() {
   const [focused, setFocused] = useState(null);
   const [costs, setCosts] = useState({});
   const [focusNeighbors, setFocusNeighbors] = useState([]);
+  const [showHelp, setShowHelp] = useState(true);
+  const [currentSection, setCurrentSection] = useState("overview");
   const prevWidth = useRef(0);
 
   const gridRef = useRef(null);
@@ -267,6 +270,12 @@ export default function Home() {
 
   return (
     <div className="my-4">
+      <HelpModal
+        isOpen={showHelp}
+        onClose={() => setShowHelp(false)}
+        currentSection={currentSection}
+        onSectionChange={(section) => setCurrentSection(section)}
+      />
       <div className="mx-4 lg:flex lg:flex-row lg:space-x-6 items-stretch justify-center mb-4">
         <div className="flex-1 flex flex-col space-y-3">
           <div>
@@ -307,6 +316,12 @@ export default function Home() {
                 className={`px-3 py-2 rounded text-sm font-medium transition-all ${status === 'changeCost' ? 'bg-slate-700 ring-2 ring-white/30' : 'bg-slate-500 cursor-pointer hover:bg-slate-600 hover:scale-105'} text-white`}
               >
                 Cost
+              </button>
+              <button
+                onClick={() => setShowHelp(true)}
+                className={`px-3 py-2 rounded text-sm font-medium transition-all bg-purple-600 hover:bg-purple-700 text-white cursor-pointer`}
+              >
+                Help
               </button>
             </div>
           </div>
