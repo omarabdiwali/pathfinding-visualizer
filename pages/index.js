@@ -20,7 +20,7 @@ export default function Home() {
   const [focused, setFocused] = useState(null);
   const [costs, setCosts] = useState({});
   const [focusNeighbors, setFocusNeighbors] = useState([]);
-  const [showHelp, setShowHelp] = useState(true);
+  const [showHelp, setShowHelp] = useState(false);
   const [currentSection, setCurrentSection] = useState("overview");
   const prevWidth = useRef(0);
 
@@ -283,43 +283,43 @@ export default function Home() {
             <div className="flex flex-wrap gap-2">
               <button
                 onClick={() => changeStatus('start')}
-                className={`px-3 py-2 rounded text-sm font-medium transition-all ${status === 'start' ? 'opacity-50 cursor-not-allowed ring-2 ring-white/30' : 'cursor-pointer hover:opacity-80 hover:scale-105'} ${START} text-black`}
+                className={`px-3 py-2 rounded text-sm font-medium transition-all ${status === 'start' ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:opacity-80 hover:scale-105'} ${START} text-black`}
               >
                 Start
               </button>
               <button
                 onClick={() => changeStatus('end')}
-                className={`px-3 py-2 rounded text-sm font-medium transition-all ${status === 'end' ? 'opacity-50 cursor-not-allowed ring-2 ring-white/30' : 'cursor-pointer hover:opacity-80 hover:scale-105'} ${END} text-black`}
+                className={`px-3 py-2 rounded text-sm font-medium transition-all ${status === 'end' ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:opacity-80 hover:scale-105'} ${END} text-black`}
               >
                 End
               </button>
               <button
                 onClick={() => changeStatus('wall')}
-                className={`px-3 py-2 rounded text-sm font-medium transition-all ${status === 'wall' ? 'bg-slate-700 ring-2 ring-white/30' : 'bg-slate-500 cursor-pointer hover:bg-slate-600 hover:scale-105'} text-white`}
+                className={`px-3 py-2 rounded text-sm font-medium transition-all ${status === 'wall' ? 'bg-slate-700 cursor-not-allowed' : 'bg-slate-500 cursor-pointer hover:bg-slate-600 hover:scale-105'} text-white`}
               >
                 Wall
               </button>
               <button
                 onClick={() => changeStatus('checkpoint')}
-                className={`px-3 py-2 rounded text-sm font-medium transition-all ${status === 'checkpoint' ? 'opacity-50 cursor-not-allowed ring-2 ring-white/30' : 'cursor-pointer hover:opacity-80 hover:scale-105'} ${POINT} text-black`}
+                className={`px-3 py-2 rounded text-sm font-medium transition-all ${status === 'checkpoint' ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:opacity-80 hover:scale-105'} ${POINT} text-black`}
               >
                 Checkpoint
               </button>
               <button
                 onClick={() => changeStatus('eraser')}
-                className={`px-3 py-2 rounded text-sm font-medium transition-all ${status === 'eraser' ? 'bg-slate-700 ring-2 ring-white/30' : 'bg-slate-500 cursor-pointer hover:bg-slate-600 hover:scale-105'} text-white`}
+                className={`px-3 py-2 rounded text-sm font-medium transition-all ${status === 'eraser' ? 'bg-slate-700 cursor-not-allowed' : 'bg-slate-500 cursor-pointer hover:bg-slate-600 hover:scale-105'} text-white`}
               >
                 Eraser
               </button>
               <button
                 onClick={() => changeStatus('changeCost')}
-                className={`px-3 py-2 rounded text-sm font-medium transition-all ${status === 'changeCost' ? 'bg-slate-700 ring-2 ring-white/30' : 'bg-slate-500 cursor-pointer hover:bg-slate-600 hover:scale-105'} text-white`}
+                className={`px-3 py-2 rounded text-sm font-medium transition-all ${status === 'changeCost' ? 'bg-slate-700 cursor-not-allowed' : 'bg-slate-500 cursor-pointer hover:bg-slate-600 hover:scale-105'} text-white`}
               >
                 Cost
               </button>
               <button
                 onClick={() => setShowHelp(true)}
-                className={`px-3 py-2 rounded text-sm font-medium transition-all bg-purple-600 hover:bg-purple-700 text-white cursor-pointer`}
+                className={`px-3 py-2 rounded text-sm font-medium transition-all bg-transparent border border-slate-600 hover:scale-105 text-white cursor-pointer`}
               >
                 Help
               </button>
