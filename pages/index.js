@@ -1,17 +1,19 @@
-import { CURRENT, EMPTY_EVEN, EMPTY_ODD, END, EXPLORED, NEXT, PATH, POINT, START, WALL, clearGrid, getKey, getNeighbors, toggleBackdrop, updateRunning } from "@/algorithms/utils/constants";
-import { biDirectionalBFS } from "@/algorithms/bi-bfs";
-import { greedyBFS } from "@/algorithms/greedy-bfs";
-import { dijkstraAlgorithm } from "@/algorithms/dijkstra";
+import { CURRENT, EMPTY_EVEN, EMPTY_ODD, END, EXPLORED, NEXT, PATH, POINT, START, WALL, clearGrid, clearWalls, getKey, getNeighbors, toggleBackdrop, updateRunning } from "@/algorithms/utils/constants";
+import { biDirectionalBFS } from "@/algorithms/pathfinding/bi-bfs";
+import { greedyBFS } from "@/algorithms/pathfinding/greedy-bfs";
+import { dijkstraAlgorithm } from "@/algorithms/pathfinding/dijkstra";
 import { useEffect, useRef, useState } from "react";
-import { aStar } from "@/algorithms/astar";
-import { depthFirstSearch } from "@/algorithms/dfs";
+import { aStar } from "@/algorithms/pathfinding/astar";
+import { depthFirstSearch } from "@/algorithms/pathfinding/dfs";
 import HelpModal from "@/algorithms/utils/HelpModal";
+import recursiveBacktracking from "@/algorithms/maze/recursiveBacktracking";
 
 export default function Home() {
   const [startPos, setStartPos] = useState(null);
   const [endPos, setEndPos] = useState(null);
   const [status, setStatus] = useState('start');
   const [running, setRunning] = useState(false);
+  const [maze, setMaze] = useState(false);
   const [lastOp, setLastOp] = useState("");
   const [checkpoints, setCheckpoints] = useState([]);
   const [result, setResult] = useState('');
@@ -42,7 +44,7 @@ export default function Home() {
   }
 
   const runAlgorithm = (algo) => {
-    if (endPos == null || startPos == null || running) return;
+    if (endPos == null || startPos == null || running || maze) return;
     setFocused(null);
     setFocusNeighbors([]);
     toggleBackdrop(width, height, false);
@@ -79,7 +81,7 @@ export default function Home() {
   }
 
   const clearCompleteGrid = () => {
-    if (running) return;
+    if (running || maze) return;
     gridClear();
   }
 
@@ -90,7 +92,7 @@ export default function Home() {
   }
 
   const clickSquare = (e) => {
-    if (running) return;
+    if (running || maze) return;
     if (lastOp == 'algorithm') clearGrid(width, height, true);
     setLastOp('click');
 
@@ -219,6 +221,19 @@ export default function Home() {
     setStatus(value);
   }
 
+  const generateMaze = async () => {
+    if (running || maze) return;
+    setMaze(true);
+    recursiveBacktracking(width, height).then(() => {
+      setMaze(false);
+    })
+  }
+
+  const clearAllWalls = () => {
+    if (running || maze) return;
+    clearWalls(width, height);
+  }
+
   useEffect(() => {
     let timeoutId = null;
     const onResize = (onStart=false) => {
@@ -330,6 +345,12 @@ export default function Home() {
             <p className="text-xs uppercase tracking-wider text-slate-400 mb-2 font-semibold">Grid Actions</p>
             <div className="flex flex-wrap gap-2">
               <button
+                onClick={generateMaze}
+                className="px-3 py-2 rounded text-sm font-medium cursor-pointer hover:bg-blue-600 bg-blue-500 transition-all hover:scale-105 text-black"
+              >
+                Generate Maze
+              </button>
+              <button
                 onClick={() => setCosts({})}
                 className="px-3 py-2 rounded text-sm font-medium cursor-pointer hover:bg-pink-600 bg-pink-500 transition-all hover:scale-105 text-white"
               >
@@ -337,9 +358,15 @@ export default function Home() {
               </button>
               <button
                 onClick={() => !running && clearGrid(width, height, true)}
-                className="px-3 py-2 rounded text-sm font-medium cursor-pointer hover:bg-red-500 bg-red-400 transition-all hover:scale-105 text-black"
+                className="px-3 py-2 rounded text-sm font-medium cursor-pointer hover:bg-red-400 bg-red-300 transition-all hover:scale-105 text-black"
               >
                 Clear Path
+              </button>
+              <button
+                onClick={clearAllWalls}
+                className="px-3 py-2 rounded text-sm font-medium cursor-pointer hover:bg-red-500 bg-red-400 transition-all hover:scale-105 text-black"
+              >
+                Clear Walls
               </button>
               <button
                 onClick={clearCompleteGrid}

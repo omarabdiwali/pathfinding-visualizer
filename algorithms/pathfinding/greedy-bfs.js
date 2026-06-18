@@ -1,5 +1,5 @@
-import { EXPLORED, NEXT, sleep, changeElColor, clearGrid, drawPath, getNeighbors, reconstructPath, removeNextColors, continueRunning, CURRENT, removeExploredNodes, getPathCost } from "./utils/constants";
-import { PriorityQueue } from "./utils/PriorityQueue";
+import { EXPLORED, NEXT, sleep, changeElColor, clearGrid, drawPath, getNeighbors, reconstructPath, removeNextColors, continueRunning, CURRENT, removeExploredNodes, getPathCost, addCommas } from "../utils/constants";
+import { PriorityQueue } from "../utils/PriorityQueue";
 
 const getXAndY = (pos, width) => {
     const row = Math.floor(pos / width);
@@ -88,8 +88,8 @@ export const greedyBFS = async (positions, width, height, costs) => {
     return {
         algorithm: 'Greedy BFS',
         pathExists: true,
-        nodesTraversed: traversed - 1,
-        moves: moveCount,
-        totalCost
+        nodesTraversed: addCommas(traversed - 1),
+        moves: addCommas(moveCount),
+        totalCost: addCommas(totalCost)
     }
 }

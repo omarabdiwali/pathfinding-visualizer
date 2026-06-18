@@ -1,4 +1,4 @@
-import { EXPLORED, NEXT, sleep, changeElColor, clearGrid, drawPath, getNeighbors, reconstructPath, removeNextColors, continueRunning, removeExploredNodes, getPathCost } from "./utils/constants";
+import { EXPLORED, NEXT, sleep, changeElColor, clearGrid, drawPath, getNeighbors, reconstructPath, removeNextColors, continueRunning, removeExploredNodes, getPathCost, addCommas } from "../utils/constants";
 
 /**
  * Bi-directional BFS
@@ -112,8 +112,8 @@ export const biDirectionalBFS = async (positions, width, height, costs) => {
     return {
         algorithm: 'Bi-Directional BFS',
         pathExists: true,
-        nodesTraversed: traversed - 1,
-        moves: moveCount,
-        totalCost
+        nodesTraversed: addCommas(traversed - 1),
+        moves: addCommas(moveCount),
+        totalCost: addCommas(totalCost)
     }
 }

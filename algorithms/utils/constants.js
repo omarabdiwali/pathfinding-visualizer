@@ -175,3 +175,30 @@ export const removeExploredNodes = (nodes) => {
         el.classList.replace(EXPLORED, pos % 2 == 0 ? EMPTY_EVEN : EMPTY_ODD);
     }
 }
+
+export const addCommas = (num) => {
+    if (num < 1000) return num;
+    let str = num.toString();
+    let chars = [];
+    let count = 0;
+
+    for (let i = str.length - 1; i >= 0; i--) {
+        if (count % 3 == 0 && count != 0) {
+            chars.push(',');
+            count = 0;
+        }
+
+        chars.push(str.at(i));
+        count += 1;
+    }
+
+    return chars.reverse().join("");
+}
+
+export const clearWalls = (width, height) => {
+    for (let i = 0; i < width * height; i++) {
+        const el = document.getElementById(`${i}`);
+        if (!el.classList.contains(WALL)) continue;
+        el.classList.replace(WALL, i % 2 == 0 ? EMPTY_EVEN : EMPTY_ODD);
+    }
+}

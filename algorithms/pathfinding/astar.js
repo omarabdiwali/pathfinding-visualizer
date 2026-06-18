@@ -1,5 +1,5 @@
-import { EXPLORED, NEXT, sleep, changeElColor, clearGrid, drawPath, getNeighbors, reconstructPath, removeNextColors, continueRunning, CURRENT, removeExploredNodes, getPathCost, getKey } from "./utils/constants";
-import { PriorityQueue } from "./utils/PriorityQueue";
+import { EXPLORED, NEXT, sleep, changeElColor, clearGrid, drawPath, getNeighbors, reconstructPath, removeNextColors, continueRunning, CURRENT, removeExploredNodes, getPathCost, getKey, addCommas } from "../utils/constants";
+import { PriorityQueue } from "../utils/PriorityQueue";
 
 const getXAndY = (pos, width) => {
     const row = Math.floor(pos / width);
@@ -93,8 +93,8 @@ export const aStar = async (positions, width, height, costs) => {
     return {
         algorithm: 'A* Search',
         pathExists: true,
-        nodesTraversed: traversed - 1,
-        moves: moveCount,
-        totalCost
+        nodesTraversed: addCommas(traversed - 1),
+        moves: addCommas(moveCount),
+        totalCost: addCommas(totalCost)
     }
 }

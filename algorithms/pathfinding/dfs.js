@@ -1,4 +1,4 @@
-import { changeElColor, clearGrid, continueRunning, CURRENT, drawPath, EXPLORED, getNeighbors, getPathCost, NEXT, reconstructPath, removeExploredNodes, removeNextColors, sleep } from "./utils/constants";
+import { addCommas, changeElColor, clearGrid, continueRunning, CURRENT, drawPath, EXPLORED, getNeighbors, getPathCost, NEXT, reconstructPath, removeExploredNodes, removeNextColors, sleep } from "../utils/constants";
 
 /**
  * Depth-first search
@@ -70,8 +70,8 @@ export const depthFirstSearch = async (positions, width, height, costs) => {
     return {
         algorithm: 'Depth-First Search',
         pathExists: true,
-        nodesTraversed: traversed - 1,
-        moves: moveCount,
-        totalCost
+        nodesTraversed: addCommas(traversed - 1),
+        moves: addCommas(moveCount),
+        totalCost: addCommas(totalCost)
     }
 }

@@ -1,5 +1,5 @@
-import { changeElColor, clearGrid, continueRunning, CURRENT, drawPath, EXPLORED, getKey, getNeighbors, getPathCost, NEXT, reconstructPath, removeExploredNodes, removeNextColors, sleep } from "./utils/constants";
-import { PriorityQueue } from "./utils/PriorityQueue";
+import { addCommas, changeElColor, clearGrid, continueRunning, CURRENT, drawPath, EXPLORED, getKey, getNeighbors, getPathCost, NEXT, reconstructPath, removeExploredNodes, removeNextColors, sleep } from "../utils/constants";
+import { PriorityQueue } from "../utils/PriorityQueue";
 
 /**
  * Dijkstra's algorithm implementation
@@ -51,7 +51,7 @@ export const dijkstraAlgorithm = async (nodePositions, width, height, costs) => 
             }
 
             prevPos = currentPos;
-            await sleep(1);
+            await sleep(20);
         }
 
         if (!continueRunning) return '';
@@ -73,8 +73,8 @@ export const dijkstraAlgorithm = async (nodePositions, width, height, costs) => 
     return {
         algorithm: 'Dijkstra',
         pathExists: true,
-        nodesTraversed: traversed - 1,
-        moves: moveCount,
-        totalCost
+        nodesTraversed: addCommas(traversed - 1),
+        moves: addCommas(moveCount),
+        totalCost: addCommas(totalCost)
     }
 }
