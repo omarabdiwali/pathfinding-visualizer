@@ -1,4 +1,4 @@
-import { addCommas, changeElColor, clearGrid, continueRunning, CURRENT, drawPath, EXPLORED, getNeighbors, getPathCost, NEXT, reconstructPath, removeExploredNodes, removeNextColors, sleep } from "../utils/constants";
+import { addCommas, changeElColor, clearGrid, continueRunning, CURRENT, drawPath, EXPLORED, getNeighbors, getPathCost, NEXT, PATH, reconstructPath, redrawPathNodes, removeExploredNodes, removeNextColors, sleep } from "../utils/constants";
 
 /**
  * Depth-first search
@@ -20,6 +20,8 @@ export const depthFirstSearch = async (positions, width, height, costs) => {
 
         const parentMap = new Map();
         const passed = new Set();
+        const prevSqColor = new Map();
+
         let queue = [startNode];
         let pathFound = null;
         let prevPos = null;
@@ -29,8 +31,10 @@ export const depthFirstSearch = async (positions, width, height, costs) => {
         while (queue.length > 0 && continueRunning) {
             traversed += 1;
             let currentPos = queue.pop();
-            changeElColor(prevPos, EXPLORED);
-            changeElColor(currentPos, CURRENT);
+            changeElColor(prevPos, EXPLORED, true);
+            if (changeElColor(currentPos, CURRENT, true)) {
+                prevSqColor.set(currentPos, PATH);
+            }
 
             if (currentPos == targetNode) {
                 pathFound = reconstructPath(parentMap, targetNode);
@@ -43,7 +47,9 @@ export const depthFirstSearch = async (positions, width, height, costs) => {
                 passed.add(nextPos);
                 parentMap.set(nextPos, currentPos);
                 queue.push(nextPos);
-                changeElColor(nextPos, NEXT);
+                if (changeElColor(nextPos, NEXT, true)) {
+                    prevSqColor.set(nextPos, PATH);
+                }
             }
 
             prevPos = currentPos;
@@ -65,6 +71,7 @@ export const depthFirstSearch = async (positions, width, height, costs) => {
         totalCost += getPathCost(pathFound, costs);
         await drawPath(pathFound, startNode, targetNode);
         index < positions.length - 1 && removeExploredNodes(passed);
+        redrawPathNodes(prevSqColor);
     }
 
     return {

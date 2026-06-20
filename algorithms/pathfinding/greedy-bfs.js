@@ -1,4 +1,4 @@
-import { EXPLORED, NEXT, sleep, changeElColor, clearGrid, drawPath, getNeighbors, reconstructPath, removeNextColors, continueRunning, CURRENT, removeExploredNodes, getPathCost, addCommas } from "../utils/constants";
+import { EXPLORED, NEXT, sleep, changeElColor, clearGrid, drawPath, getNeighbors, reconstructPath, removeNextColors, continueRunning, CURRENT, removeExploredNodes, getPathCost, addCommas, PATH, redrawPathNodes } from "../utils/constants";
 import { PriorityQueue } from "../utils/PriorityQueue";
 
 const getXAndY = (pos, width) => {
@@ -31,9 +31,10 @@ export const greedyBFS = async (positions, width, height, costs) => {
         let targetNode = positions.at(index + 1);
         index += 1;
 
-        let visited = new Set();
-        let parentMap = new Map();
-        let queue = new PriorityQueue();
+        const visited = new Set();
+        const parentMap = new Map();
+        const prevSqColor = new Map();
+        const queue = new PriorityQueue();
 
         queue.enqueue(startNode, 0);
         visited.add(startNode);
@@ -45,8 +46,10 @@ export const greedyBFS = async (positions, width, height, costs) => {
         while (queue.size() > 0 && continueRunning) {
             traversed += 1;
             const currentPos = queue.dequeue();
-            changeElColor(prevPos, EXPLORED);
-            changeElColor(currentPos, CURRENT);
+            changeElColor(prevPos, EXPLORED, true);
+            if (changeElColor(currentPos, CURRENT, true)) {
+                prevSqColor.set(currentPos, PATH);
+            }
 
             if (currentPos == targetNode) {
                 path = reconstructPath(parentMap, targetNode);
@@ -61,7 +64,9 @@ export const greedyBFS = async (positions, width, height, costs) => {
                 visited.add(nextPos);
                 parentMap.set(nextPos, currentPos);
                 queue.enqueue(nextPos, heuristic);
-                changeElColor(nextPos, NEXT);
+                if (changeElColor(nextPos, NEXT, true)) {
+                    prevSqColor.set(nextPos, PATH);
+                }
             }
 
             prevPos = currentPos;
@@ -83,6 +88,7 @@ export const greedyBFS = async (positions, width, height, costs) => {
         totalCost += getPathCost(path, costs);
         await drawPath(path, startNode, targetNode);
         index < positions.length - 1 && removeExploredNodes(visited);
+        redrawPathNodes(prevSqColor);
     }
 
     return {

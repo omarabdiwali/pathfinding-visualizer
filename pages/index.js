@@ -1,4 +1,4 @@
-import { CURRENT, EMPTY_EVEN, EMPTY_ODD, END, EXPLORED, NEXT, PATH, POINT, START, WALL, clearGrid, clearWalls, getKey, getNeighbors, toggleBackdrop, updateRunning } from "@/algorithms/utils/constants";
+import { ALT_EXPLORED, ALT_NEXT, CURRENT, EMPTY_EVEN, EMPTY_ODD, END, EXPLORED, NEXT, PATH, POINT, START, WALL, clearGrid, clearWalls, getKey, getNeighbors, toggleBackdrop, updateRunning } from "@/algorithms/utils/constants";
 import { biDirectionalBFS } from "@/algorithms/pathfinding/bi-bfs";
 import { greedyBFS } from "@/algorithms/pathfinding/greedy-bfs";
 import { dijkstraAlgorithm } from "@/algorithms/pathfinding/dijkstra";
@@ -70,6 +70,8 @@ export default function Home() {
     el.classList.remove(EMPTY_EVEN);
     el.classList.remove(EMPTY_ODD);
     el.classList.remove(CURRENT);
+    el.classList.remove(ALT_EXPLORED);
+    el.classList.remove(ALT_NEXT);
   }
 
   const gridClear = () => {
@@ -181,10 +183,11 @@ export default function Home() {
       } else {
         clearSquare(el);
         el.classList.add(POINT);
-        const prev = [...checkpoints];
-        prev.push(newPos);
-        setCheckpoints(prev);
       }
+
+      const prev = [...checkpoints];
+      prev.push(newPos);
+      setCheckpoints(prev);
     }
     else if (status == 'changeCost') {
       if (el.classList.contains(WALL)) return;

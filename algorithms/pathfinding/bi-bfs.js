@@ -1,4 +1,4 @@
-import { EXPLORED, NEXT, sleep, changeElColor, clearGrid, drawPath, getNeighbors, reconstructPath, removeNextColors, continueRunning, removeExploredNodes, getPathCost, addCommas } from "../utils/constants";
+import { EXPLORED, NEXT, redrawPathNodes, sleep, changeElColor, clearGrid, drawPath, getNeighbors, reconstructPath, removeNextColors, continueRunning, removeExploredNodes, getPathCost, addCommas, ALT_EXPLORED, ALT_NEXT, POINT, PATH } from "../utils/constants";
 
 /**
  * Bi-directional BFS
@@ -19,13 +19,16 @@ export const biDirectionalBFS = async (positions, width, height, costs) => {
         
         let startQueue = [startNode];
         let targetQueue = [targetNode];
-        let startMap = new Map();
-        let targetMap = new Map();
-        let startPassed = new Set();
-        let targetPassed = new Set();
+        
+        const startMap = new Map();
+        const targetMap = new Map();
+        const startPassed = new Set();
+        const targetPassed = new Set();
+        const prevSqColor = new Map();
 
         startPassed.add(startNode);
         targetPassed.add(targetNode);
+        
         let done = false;
         let path = null;
         
@@ -39,7 +42,9 @@ export const biDirectionalBFS = async (positions, width, height, costs) => {
             for (let i = 0; i < startQueueLen; i++) {
                 traversed += 1;
                 const currentPos = startQueue.shift();
-                changeElColor(currentPos, EXPLORED);
+                if (changeElColor(currentPos, EXPLORED, true)) {
+                    prevSqColor.set(currentPos, PATH)
+                }
 
                 if (targetMap.has(currentPos)) {
                     let fromStart = reconstructPath(startMap, currentPos);
@@ -56,7 +61,9 @@ export const biDirectionalBFS = async (positions, width, height, costs) => {
                     startPassed.add(nextPos);
                     startMap.set(nextPos, currentPos);
                     startQueue.push(nextPos);
-                    changeElColor(nextPos, NEXT)
+                    if (changeElColor(nextPos, NEXT, true)) {
+                        prevSqColor.set(nextPos, PATH);
+                    }
                 }
             }
 
@@ -65,7 +72,9 @@ export const biDirectionalBFS = async (positions, width, height, costs) => {
             for (let i = 0; i < targetQueueLen; i++) {
                 traversed += 1;
                 const currentPos = targetQueue.shift();
-                changeElColor(currentPos, EXPLORED);
+                if (changeElColor(currentPos, ALT_EXPLORED, true)) {
+                    prevSqColor.set(currentPos, PATH);
+                }
                 
                 if (startMap.has(currentPos)) {
                     let fromStart = reconstructPath(startMap, currentPos);
@@ -83,7 +92,9 @@ export const biDirectionalBFS = async (positions, width, height, costs) => {
                     targetPassed.add(nextPos);
                     targetMap.set(nextPos, currentPos);
                     targetQueue.push(nextPos);
-                    changeElColor(nextPos, NEXT);
+                    if (changeElColor(nextPos, ALT_NEXT, true)) {
+                        prevSqColor.set(nextPos, PATH);
+                    }
                 }
             }
 
@@ -101,12 +112,13 @@ export const biDirectionalBFS = async (positions, width, height, costs) => {
         }
 
         removeNextColors(startQueue);
-        removeNextColors(targetQueue);
+        removeNextColors(targetQueue, ALT_EXPLORED);
         moveCount += new Set(path).size - 1;
         totalCost += getPathCost(path, costs);
         await drawPath(path, startNode, targetNode);
         index < positions.length - 1 && removeExploredNodes(startPassed);
         index < positions.length - 1 && removeExploredNodes(targetPassed);
+        redrawPathNodes(prevSqColor);
     }
 
     return {

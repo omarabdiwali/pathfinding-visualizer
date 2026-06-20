@@ -1,4 +1,4 @@
-import { EXPLORED, NEXT, sleep, changeElColor, clearGrid, drawPath, getNeighbors, reconstructPath, removeNextColors, continueRunning, CURRENT, removeExploredNodes, getPathCost, getKey, addCommas } from "../utils/constants";
+import { EXPLORED, NEXT, sleep, changeElColor, clearGrid, drawPath, getNeighbors, reconstructPath, removeNextColors, continueRunning, CURRENT, removeExploredNodes, getPathCost, getKey, addCommas, PATH, redrawPathNodes } from "../utils/constants";
 import { PriorityQueue } from "../utils/PriorityQueue";
 
 const getXAndY = (pos, width) => {
@@ -34,21 +34,25 @@ export const aStar = async (positions, width, height, costs) => {
         index += 1;
 
         let frontier = new PriorityQueue();
+        const cameFrom = new Map();
+        const costSoFar = new Map();
+        const prevSqColor = new Map();
+
         frontier.enqueue(startNode, 0);
-        let cameFrom = new Map();
-        let costSoFar = new Map();
+        cameFrom.set(startNode, null);
+        costSoFar.set(startNode, 0);
+
         let done = false;
         let path = null;
         let prevPos = null;
 
-        cameFrom.set(startNode, null);
-        costSoFar.set(startNode, 0);
-
         while (frontier.size() > 0 && continueRunning) {
             traversed += 1;
             let currentPos = frontier.dequeue();
-            changeElColor(prevPos, EXPLORED);
-            changeElColor(currentPos, CURRENT);
+            changeElColor(prevPos, EXPLORED, true);
+            if (changeElColor(currentPos, CURRENT, true)) {
+                prevSqColor.set(currentPos, PATH);
+            }
 
             if (currentPos == targetNode) {
                 done = true;
@@ -63,7 +67,9 @@ export const aStar = async (positions, width, height, costs) => {
                     const priority = newCost + getHeuristic(nextPos, targetNode, width);
                     frontier.enqueue(nextPos, priority);
                     cameFrom.set(nextPos, currentPos);
-                    changeElColor(nextPos, NEXT);
+                    if (changeElColor(nextPos, NEXT, true)) {
+                        prevSqColor.set(nextPos, PATH);
+                    }
                 }
             }
 
@@ -88,6 +94,7 @@ export const aStar = async (positions, width, height, costs) => {
 
         await drawPath(path, startNode, targetNode);
         index < positions.length - 1 && removeExploredNodes(costSoFar.keys());
+        redrawPathNodes(prevSqColor);
     }
 
     return {

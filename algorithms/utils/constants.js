@@ -8,6 +8,8 @@ export const NEXT = 'bg-green-500';
 export const EXPLORED = 'bg-red-500';
 export const POINT = 'bg-blue-500';
 export const CURRENT = 'bg-blue-800';
+export const ALT_EXPLORED = 'bg-purple-300';
+export const ALT_NEXT = 'bg-blue-200';
 export const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 export let continueRunning = true;
 
@@ -34,6 +36,8 @@ const removePreviousColor = (el) => {
     el.classList.remove(WALL);
     el.classList.remove(POINT);
     el.classList.remove(CURRENT);
+    el.classList.remove(ALT_EXPLORED);
+    el.classList.remove(ALT_NEXT);
 }
 
 const shuffle = (array) => {
@@ -86,7 +90,8 @@ export const clearGrid = (width, height, keepNodes) => {
 
         if (keepNodes) {
             const classes = el.classList;
-            if (classes.contains(EXPLORED) || classes.contains(NEXT) || classes.contains(PATH) || classes.contains(CURRENT)) {
+            if (classes.contains(EXPLORED) || classes.contains(NEXT) || classes.contains(ALT_EXPLORED) 
+                || classes.contains(ALT_NEXT) || classes.contains(PATH) || classes.contains(CURRENT)) {
                 removePreviousColor(el);
                 i % 2 == 0 ? el.classList.add(EMPTY_EVEN) : el.classList.add(EMPTY_ODD);
             }
@@ -150,20 +155,24 @@ export const drawPath = async (path, start, end) => {
     }
 }
 
-export const changeElColor = (pos, color) => {
-    if (pos == null) return;
+export const changeElColor = (pos, color, allowPath=false) => {
+    if (pos == null) return false;
     const el = document.getElementById(`${pos}`);
-    if (el == null) return;
-    if (el.classList.contains(PATH) || el.classList.contains(START) || el.classList.contains(POINT) || el.classList.contains(END)) return;
+    if (el == null) return false;
+    if (el.classList.contains(START) || el.classList.contains(POINT) || el.classList.contains(END) || (!allowPath && el.classList.contains(PATH))) return false;
+
+    const isPath = el.classList.contains(PATH);
     removePreviousColor(el);
     el.classList.add(color);
+    return allowPath && isPath;
 }
 
-export const removeNextColors = (remaining) => {
+export const removeNextColors = (remaining, color=EXPLORED) => {
     for (const pos of remaining) {
         const el = document.getElementById(`${pos}`);
-        if (!el.classList.contains(NEXT)) continue;
-        el.classList.replace(NEXT, EXPLORED);
+        if (!el.classList.contains(NEXT) && !el.classList.contains(ALT_NEXT)) continue;
+        el.classList.replace(NEXT, color);
+        el.classList.replace(ALT_NEXT, color);
     }
 }
 
@@ -171,8 +180,17 @@ export const removeExploredNodes = (nodes) => {
     for (const pos of nodes) {
         if (pos == null) continue;
         const el = document.getElementById(`${pos}`);
-        if (!el.classList.contains(EXPLORED)) continue;
+        if (!el.classList.contains(EXPLORED) && !el.classList.contains(ALT_EXPLORED)) continue;
         el.classList.replace(EXPLORED, pos % 2 == 0 ? EMPTY_EVEN : EMPTY_ODD);
+        el.classList.replace(ALT_EXPLORED, pos % 2 == 0 ? EMPTY_EVEN : EMPTY_ODD)
+    }
+}
+
+export const redrawPathNodes = (prevPos) => {
+    for (const key of prevPos.keys()) {
+        const el = document.getElementById(`${key}`);
+        removePreviousColor(el);
+        el.classList.add(PATH);
     }
 }
 
