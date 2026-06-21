@@ -36,7 +36,7 @@ export const aStar = async (positions, width, height, costs) => {
         let frontier = new PriorityQueue();
         const cameFrom = new Map();
         const costSoFar = new Map();
-        const prevSqColor = new Map();
+        const wasPath = new Map();
 
         frontier.enqueue(startNode, 0);
         cameFrom.set(startNode, null);
@@ -49,9 +49,9 @@ export const aStar = async (positions, width, height, costs) => {
         while (frontier.size() > 0 && continueRunning) {
             traversed += 1;
             let currentPos = frontier.dequeue();
-            changeElColor(prevPos, EXPLORED, true);
+            changeElColor(prevPos, EXPLORED);
             if (changeElColor(currentPos, CURRENT, true)) {
-                prevSqColor.set(currentPos, PATH);
+                wasPath.set(currentPos, PATH);
             }
 
             if (currentPos == targetNode) {
@@ -68,7 +68,7 @@ export const aStar = async (positions, width, height, costs) => {
                     frontier.enqueue(nextPos, priority);
                     cameFrom.set(nextPos, currentPos);
                     if (changeElColor(nextPos, NEXT, true)) {
-                        prevSqColor.set(nextPos, PATH);
+                        wasPath.set(nextPos, PATH);
                     }
                 }
             }
@@ -94,7 +94,7 @@ export const aStar = async (positions, width, height, costs) => {
 
         await drawPath(path, startNode, targetNode);
         index < positions.length - 1 && removeExploredNodes(costSoFar.keys());
-        redrawPathNodes(prevSqColor);
+        redrawPathNodes(wasPath);
     }
 
     return {

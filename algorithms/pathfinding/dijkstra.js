@@ -19,7 +19,7 @@ export const dijkstraAlgorithm = async (nodePositions, width, height, costs) => 
 
         const parentMap = new Map();
         const dist = new Map();
-        const prevSqColor = new Map();
+        const wasPath = new Map();
         const queue = new PriorityQueue();
         const passed = new Set();
         
@@ -33,9 +33,9 @@ export const dijkstraAlgorithm = async (nodePositions, width, height, costs) => 
         while (queue.size() > 0 && continueRunning) {
             traversed += 1;
             const currentPos = queue.dequeue();
-            changeElColor(prevPos, EXPLORED, true);
+            changeElColor(prevPos, EXPLORED);
             if (changeElColor(currentPos, CURRENT, true)) {
-                prevSqColor.set(currentPos, PATH);
+                wasPath.set(currentPos, PATH);
             }
             if (currentPos == targetNode) {
                 pathFound = reconstructPath(parentMap, targetNode);
@@ -51,7 +51,7 @@ export const dijkstraAlgorithm = async (nodePositions, width, height, costs) => 
                     dist.set(nextPos, score);
                     queue.enqueue(nextPos, score);
                     if (changeElColor(nextPos, NEXT, true)) {
-                        prevSqColor.set(nextPos, PATH);
+                        wasPath.set(nextPos, PATH);
                     }
                 }
             }
@@ -74,7 +74,7 @@ export const dijkstraAlgorithm = async (nodePositions, width, height, costs) => 
         totalCost += getPathCost(pathFound, costs);
         await drawPath(pathFound, beginNode, targetNode);
         index < nodePositions.length - 1 && removeExploredNodes(dist.keys());
-        redrawPathNodes(prevSqColor);
+        redrawPathNodes(wasPath);
     }
 
     return {

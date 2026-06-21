@@ -8,8 +8,8 @@ export const NEXT = 'bg-green-500';
 export const EXPLORED = 'bg-red-500';
 export const POINT = 'bg-blue-500';
 export const CURRENT = 'bg-blue-800';
-export const ALT_EXPLORED = 'bg-purple-300';
-export const ALT_NEXT = 'bg-blue-200';
+export const ALT_EXPLORED = 'bg-teal-500';
+export const ALT_NEXT = 'bg-blue-300';
 export const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 export let continueRunning = true;
 

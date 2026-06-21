@@ -40,9 +40,9 @@ const helpSections = {
     **Color-coded Cells**
     **Start/End**: Distinct colors for identification (Orange/Purple)
     **Walls**: Obstacles that cannot be traversed (Black)
-    **Next**: Nodes that have been added to the queue, but not yet visited (Green)
+    **Next**: Nodes that have been added to the queue, but not yet visited (Green/Light Blue)
     **Current**: The current node being explored (Dark Blue)
-    **Explored**: Nodes visited during search (Red)
+    **Explored**: Nodes visited during search (Red/Cyan)
     **Path**: Final route from start to end (Yellow)
     **Checkpoints**: Intermediate destinations (Sky Blue)
     \n\n
@@ -61,7 +61,7 @@ const helpSections = {
     **Reset Costs**: Resets all edge costs back to default value (1)`
   },
   edgeCosts: {
-    tab: "Edge Costs",
+    tab: "Costs",
     title: "Edge Costs Explained",
     content: `Edge costs represent the "difficulty" or "distance" of moving between adjacent cells:
     • **Default Cost**: 1 (standard movement)

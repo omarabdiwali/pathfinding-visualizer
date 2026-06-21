@@ -24,7 +24,7 @@ export const biDirectionalBFS = async (positions, width, height, costs) => {
         const targetMap = new Map();
         const startPassed = new Set();
         const targetPassed = new Set();
-        const prevSqColor = new Map();
+        const wasPath = new Map();
 
         startPassed.add(startNode);
         targetPassed.add(targetNode);
@@ -43,7 +43,7 @@ export const biDirectionalBFS = async (positions, width, height, costs) => {
                 traversed += 1;
                 const currentPos = startQueue.shift();
                 if (changeElColor(currentPos, EXPLORED, true)) {
-                    prevSqColor.set(currentPos, PATH)
+                    wasPath.set(currentPos, PATH)
                 }
 
                 if (targetMap.has(currentPos)) {
@@ -62,7 +62,7 @@ export const biDirectionalBFS = async (positions, width, height, costs) => {
                     startMap.set(nextPos, currentPos);
                     startQueue.push(nextPos);
                     if (changeElColor(nextPos, NEXT, true)) {
-                        prevSqColor.set(nextPos, PATH);
+                        wasPath.set(nextPos, PATH);
                     }
                 }
             }
@@ -73,7 +73,7 @@ export const biDirectionalBFS = async (positions, width, height, costs) => {
                 traversed += 1;
                 const currentPos = targetQueue.shift();
                 if (changeElColor(currentPos, ALT_EXPLORED, true)) {
-                    prevSqColor.set(currentPos, PATH);
+                    wasPath.set(currentPos, PATH);
                 }
                 
                 if (startMap.has(currentPos)) {
@@ -93,7 +93,7 @@ export const biDirectionalBFS = async (positions, width, height, costs) => {
                     targetMap.set(nextPos, currentPos);
                     targetQueue.push(nextPos);
                     if (changeElColor(nextPos, ALT_NEXT, true)) {
-                        prevSqColor.set(nextPos, PATH);
+                        wasPath.set(nextPos, PATH);
                     }
                 }
             }
@@ -118,7 +118,7 @@ export const biDirectionalBFS = async (positions, width, height, costs) => {
         await drawPath(path, startNode, targetNode);
         index < positions.length - 1 && removeExploredNodes(startPassed);
         index < positions.length - 1 && removeExploredNodes(targetPassed);
-        redrawPathNodes(prevSqColor);
+        redrawPathNodes(wasPath);
     }
 
     return {

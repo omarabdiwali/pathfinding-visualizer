@@ -33,7 +33,7 @@ export const greedyBFS = async (positions, width, height, costs) => {
 
         const visited = new Set();
         const parentMap = new Map();
-        const prevSqColor = new Map();
+        const wasPath = new Map();
         const queue = new PriorityQueue();
 
         queue.enqueue(startNode, 0);
@@ -46,9 +46,9 @@ export const greedyBFS = async (positions, width, height, costs) => {
         while (queue.size() > 0 && continueRunning) {
             traversed += 1;
             const currentPos = queue.dequeue();
-            changeElColor(prevPos, EXPLORED, true);
+            changeElColor(prevPos, EXPLORED);
             if (changeElColor(currentPos, CURRENT, true)) {
-                prevSqColor.set(currentPos, PATH);
+                wasPath.set(currentPos, PATH);
             }
 
             if (currentPos == targetNode) {
@@ -65,7 +65,7 @@ export const greedyBFS = async (positions, width, height, costs) => {
                 parentMap.set(nextPos, currentPos);
                 queue.enqueue(nextPos, heuristic);
                 if (changeElColor(nextPos, NEXT, true)) {
-                    prevSqColor.set(nextPos, PATH);
+                    wasPath.set(nextPos, PATH);
                 }
             }
 
@@ -88,7 +88,7 @@ export const greedyBFS = async (positions, width, height, costs) => {
         totalCost += getPathCost(path, costs);
         await drawPath(path, startNode, targetNode);
         index < positions.length - 1 && removeExploredNodes(visited);
-        redrawPathNodes(prevSqColor);
+        redrawPathNodes(wasPath);
     }
 
     return {

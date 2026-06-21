@@ -20,7 +20,7 @@ export const depthFirstSearch = async (positions, width, height, costs) => {
 
         const parentMap = new Map();
         const passed = new Set();
-        const prevSqColor = new Map();
+        const wasPath = new Map();
 
         let queue = [startNode];
         let pathFound = null;
@@ -31,9 +31,9 @@ export const depthFirstSearch = async (positions, width, height, costs) => {
         while (queue.length > 0 && continueRunning) {
             traversed += 1;
             let currentPos = queue.pop();
-            changeElColor(prevPos, EXPLORED, true);
+            changeElColor(prevPos, EXPLORED);
             if (changeElColor(currentPos, CURRENT, true)) {
-                prevSqColor.set(currentPos, PATH);
+                wasPath.set(currentPos, PATH);
             }
 
             if (currentPos == targetNode) {
@@ -48,7 +48,7 @@ export const depthFirstSearch = async (positions, width, height, costs) => {
                 parentMap.set(nextPos, currentPos);
                 queue.push(nextPos);
                 if (changeElColor(nextPos, NEXT, true)) {
-                    prevSqColor.set(nextPos, PATH);
+                    wasPath.set(nextPos, PATH);
                 }
             }
 
@@ -71,7 +71,7 @@ export const depthFirstSearch = async (positions, width, height, costs) => {
         totalCost += getPathCost(pathFound, costs);
         await drawPath(pathFound, startNode, targetNode);
         index < positions.length - 1 && removeExploredNodes(passed);
-        redrawPathNodes(prevSqColor);
+        redrawPathNodes(wasPath);
     }
 
     return {
