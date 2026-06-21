@@ -1,10 +1,10 @@
 # Pathfinding Visualizer
 
-A web-based interactive visualization tool for popular search algorithms including Dijkstra's Algorithm, A*, Bi-directional BFS, DFS, and Greedy Best-First Search.
+A web-based interactive visualization tool for popular search algorithms including Dijkstra's Algorithm, A*, Bi-directional BFS, DFS, and Greedy Best-First Search, with maze generation built in.
 
 **https://visualizer-path.vercel.app**
 
-![Home Page](https://i.imgur.com/uN6aXHB.png)
+![Home Page](https://i.imgur.com/g0pfUBg.png)
 
 ## Features
 
@@ -14,6 +14,11 @@ A web-based interactive visualization tool for popular search algorithms includi
   - Bi-directional BFS
   - Depth First Search (DFS)
   - Greedy Best-First Search (Greedy BFS)
+
+- **Maze Generation**: Automatically generate mazes using different algorithms
+  - Recursive Backtracking
+  - Imperfect Maze
+  - Prim's Algorithm
 
 - **Interactive Grid Manipulation**
   - Place and move **Start** and **End** nodes
@@ -27,7 +32,7 @@ A web-based interactive visualization tool for popular search algorithms includi
   - Color-coded cells for different states (start, end, walls, explored, path)
   - Visual feedback with different colors for even/odd grid positions
 
-![Visualization](https://i.imgur.com/ZlmFRON.png)
+![Visualization](https://i.imgur.com/u7VFidW.png)
 
 - **Detailed Results**
   - Nodes visited count
@@ -70,6 +75,10 @@ Open [http://localhost:3000](http://localhost:3000) in your browser to see the a
 
 ![Edge Costs](https://i.imgur.com/U2JJqyN.png)
 
+### Generating Mazes
+1. Select one of the available maze generation algorithms
+2. Watch the maze being generated in real-time on the grid
+
 ### Running Algorithms
 1. Set up your grid with start, end, and optional walls/checkpoints
 2. Click any algorithm button (Dijkstra, Bi-BFS, DFS, Greedy BFS, or A*)
@@ -78,10 +87,11 @@ Open [http://localhost:3000](http://localhost:3000) in your browser to see the a
 
 ### Clearing the Grid
 - **Clear Path**: Removes visualization markings but keeps walls and nodes
+- **Clear Walls**: Removes all walls but keeps nodes and visualization markings
 - **Clear All**: Resets the entire grid to its initial state
 - **Reset Costs**: Resets all edge costs to default values (1)
 
-## Algorithm Descriptions
+## Pathfinding Algorithms
 
 ### Dijkstra's Algorithm
 Finds the shortest path from start to end by exploring all neighbors at the present depth before moving to nodes at the next depth level. Guarantees the optimal solution.
@@ -98,6 +108,17 @@ Explores as far as possible along each branch before backtracking. Does not guar
 ### Greedy Best-First Search
 Uses only the heuristic function to determine which node to explore next, without considering the cost so far. Not guaranteed to find the optimal path.
 
+## Maze Generation Algorithms
+
+### Recursive Backtracking
+Uses a depth-first approach with a stack. Carves passages by visiting random unvisited neighbors, backtracking when stuck. Produces long winding corridors with few dead ends.
+
+### Imperfect Maze
+Based on recursive backtracking but randomly removes some walls during rendering. Creates a maze with multiple paths and loops, making it less perfect and more complex.
+
+### Prim's Algorithm
+Begins with a single cell and grows the maze by randomly adding frontier cells. Creates a more organic, branching maze with many short dead ends.
+
 ## Tech Stack
 
 - **Frontend**: Next.js
@@ -109,21 +130,23 @@ Uses only the heuristic function to determine which node to explore next, withou
 ```
 search-algorithms/
 ├── pages/
-│   └── index.js          # Main application component
+│   └── index.js                        # Main application component
 ├── algorithms/
 │   ├── utils/
-│   │   └── constants.js  # Constants and utility functions
-│   ├── di-bfs.js         # Bi-directional BFS implementation
-│   ├── greedy-bfs.js     # Greedy BFS implementation
-│   ├── dijkstra.js       # Dijkstra's algorithm
-│   ├── astar.js          # A* algorithm
-│   └── dfs.js            # Depth First Search
+│   │   ├── constants.js                # Constants and utility functions
+│   │   ├── PriorityQueue.js            # Custom Priority Queue class 
+│   │   └── HelpModal.js                # Help modal with usage instructions
+|   ├── maze/
+│   │   ├── primsAlgorithm.js           # Prim's algorithm implementation
+│   │   └── recursiveBacktracking.js    # Recursive backtracking & imperfect maze
+|   └── pathfinding/
+│       ├── di-bfs.js                   # Bi-directional BFS implementation
+│       ├── greedy-bfs.js               # Greedy BFS implementation
+│       ├── dijkstra.js                 # Dijkstra's algorithm
+│       ├── astar.js                    # A* algorithm
+│       └── dfs.js                      # Depth First Search
 └── README.md
 ```
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit pull requests or open issues for bug fixes and feature enhancements.
 
 ## License
 
