@@ -17,7 +17,7 @@ const helpSections = {
     \n\nGrid size auto-adjusts to your window dimensions`
   },
   algorithms: {
-    tab: "Algorithms",
+    tab: "Pathfinding",
     title: "Pathfinding Algorithms",
     content: `**Dijkstra's Algorithm**
     Explores all neighbors at present depth before moving deeper. Guarantees the shortest path.
@@ -29,6 +29,16 @@ const helpSections = {
     Explores as far as possible along each branch before backtracking. Does not guarantee shortest path.
     **Greedy Best-First Search**
     Uses only heuristic to determine next node. Fast but not guaranteed to find optimal path.`
+  },
+  maze: {
+    tab: "Maze",
+    title: "Maze Generation Algorithms",
+    content: `**Recursive Backtracking**
+    Uses a depth-first approach with a stack. Carves passages by visiting random unvisited neighbors, backtracking when stuck. Produces long winding corridors with few dead ends.
+    **Imperfect Maze**
+    Based on recursive backtracking but randomly removes some walls during rendering. Creates a maze with multiple paths and loops, making it less perfect and more complex.
+    **Prim's Algorithm**
+    Begins with a single cell and grows the maze by randomly adding frontier cells. Creates a more organic, branching maze with many short dead ends.`
   },
   visualization: {
     tab: "Animation",
@@ -42,7 +52,7 @@ const helpSections = {
     **Walls**: Obstacles that cannot be traversed (Black)
     **Next**: Nodes that have been added to the queue, but not yet visited (Green/Light Blue)
     **Current**: The current node being explored (Dark Blue)
-    **Explored**: Nodes visited during search (Red/Cyan)
+    **Explored**: Nodes visited during search (Red/Teal)
     **Path**: Final route from start to end (Yellow)
     **Checkpoints**: Intermediate destinations (Sky Blue)
     \n\n

@@ -6,7 +6,8 @@ import { useEffect, useRef, useState } from "react";
 import { aStar } from "@/algorithms/pathfinding/astar";
 import { depthFirstSearch } from "@/algorithms/pathfinding/dfs";
 import HelpModal from "@/algorithms/utils/HelpModal";
-import recursiveBacktracking from "@/algorithms/maze/recursiveBacktracking";
+import { recursiveBacktracking, imperfectMaze } from "@/algorithms/maze/recursiveBacktracking";
+import primsAlgorithm from "@/algorithms/maze/primsAlgorithm";
 
 export default function Home() {
   const [startPos, setStartPos] = useState(null);
@@ -224,10 +225,11 @@ export default function Home() {
     setStatus(value);
   }
 
-  const generateMaze = async () => {
+  const generateMaze = async (algo) => {
     if (running || maze) return;
     setMaze(true);
-    recursiveBacktracking(width, height).then(() => {
+    const func = algo == 'imperfect' ? imperfectMaze : algo == 'prims' ? primsAlgorithm : recursiveBacktracking;
+    func(width, height).then(() => {
       setMaze(false);
     })
   }
@@ -345,14 +347,32 @@ export default function Home() {
           </div>
 
           <div>
-            <p className="text-xs uppercase tracking-wider text-slate-400 mb-2 font-semibold">Grid Actions</p>
+            <p className="text-xs uppercase tracking-wider text-slate-400 mb-2 font-semibold">Maze Generation</p>
             <div className="flex flex-wrap gap-2">
               <button
-                onClick={generateMaze}
-                className="px-3 py-2 rounded text-sm font-medium cursor-pointer hover:bg-blue-600 bg-blue-500 transition-all hover:scale-105 text-black"
+                onClick={() => generateMaze('recursive')}
+                className="px-3 py-2 rounded text-sm font-medium cursor-pointer hover:bg-blue-400 bg-blue-300 transition-all hover:scale-105 text-black"
               >
-                Generate Maze
+                Recursive Backtracking
               </button>
+              <button
+                onClick={() => generateMaze('imperfect')}
+                className="px-3 py-2 rounded text-sm font-medium cursor-pointer hover:bg-blue-400 bg-blue-300 transition-all hover:scale-105 text-black"
+              >
+                Imperfect Maze
+              </button>
+              <button
+                onClick={() => generateMaze('prims')}
+                className="px-3 py-2 rounded text-sm font-medium cursor-pointer hover:bg-blue-400 bg-blue-300 transition-all hover:scale-105 text-black"
+              >
+                Prim&#39;s Algorithm
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <p className="text-xs uppercase tracking-wider text-slate-400 mb-2 font-semibold">Grid Actions</p>
+            <div className="flex flex-wrap gap-2">
               <button
                 onClick={() => setCosts({})}
                 className="px-3 py-2 rounded text-sm font-medium cursor-pointer hover:bg-pink-600 bg-pink-500 transition-all hover:scale-105 text-white"

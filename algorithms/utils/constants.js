@@ -220,3 +220,12 @@ export const clearWalls = (width, height) => {
         el.classList.replace(WALL, i % 2 == 0 ? EMPTY_EVEN : EMPTY_ODD);
     }
 }
+
+export const makeAllWalls = (width, height) => {
+    for (let i = 0; i < height; i++) {
+        for (let j = 0; j < width; j++) {
+            const pos = i * width + j;
+            changeElColor(pos, WALL);
+        }
+    }
+}
