@@ -1,4 +1,4 @@
-import { changeElColor, clearGrid, clearWalls, EMPTY_EVEN, EMPTY_ODD, makeAllWalls, removePreviousColor, sleep, WALL } from "../utils/constants"
+import { changeElColor, clearGrid, clearWalls, continueRunning, EMPTY_EVEN, EMPTY_ODD, makeAllWalls, sleep, WALL } from "../utils/constants"
 
 const recursiveBacktrackingAlgorithm = async (width, height, fillWalls) => {
     let maze = Array.from({ length: height }, () => Array(width).fill(1));
@@ -10,6 +10,7 @@ const recursiveBacktrackingAlgorithm = async (width, height, fillWalls) => {
     fillWalls && changeElColor(pos, pos % 2 == 0 ? EMPTY_EVEN : EMPTY_ODD);
 
     while (stack.length > 0) {
+        if (!continueRunning) break;
         let [cx, cy] = stack.at(-1);
         let unvisited = [];
 
@@ -60,6 +61,9 @@ export const imperfectMaze = async (width, height) => {
     clearGrid(width, height, true);
     clearWalls(width, height);
     const maze = await recursiveBacktrackingAlgorithm(width, height, false);
+    if (!continueRunning) {
+        return;
+    }
 
     let pos = 0;
     for (const row of maze) {

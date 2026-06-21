@@ -1,8 +1,7 @@
-import { changeElColor, clearGrid, clearWalls, EMPTY_EVEN, EMPTY_ODD, makeAllWalls, sleep } from "../utils/constants";
+import { changeElColor, clearGrid, continueRunning, EMPTY_EVEN, EMPTY_ODD, makeAllWalls, sleep } from "../utils/constants";
 
 const primsAlgorithm = async (width, height) => {
     clearGrid(width, height, true);
-    // clearWalls(width, height);
     makeAllWalls(width, height);
     
     let maze = Array.from({ length: height }, () => Array(width).fill(1));
@@ -36,6 +35,7 @@ const primsAlgorithm = async (width, height) => {
     addFrotier(startX, startY);
     
     while (frontier.length > 0) {
+        if (!continueRunning) break;
         const randIndex = Math.floor(Math.random() * frontier.length);
         const [wx, wy, nx, ny] = frontier.splice(randIndex, 1)[0];
 

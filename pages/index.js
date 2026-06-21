@@ -228,6 +228,7 @@ export default function Home() {
   const generateMaze = async (algo) => {
     if (running || maze) return;
     setMaze(true);
+    updateRunning(true);
     const func = algo == 'imperfect' ? imperfectMaze : algo == 'prims' ? primsAlgorithm : recursiveBacktracking;
     func(width, height).then(() => {
       setMaze(false);
