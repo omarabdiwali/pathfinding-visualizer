@@ -67,6 +67,7 @@ const helpSections = {
     tab: "Reset",
     title: "Clearing & Resetting",
     content: `**Clear Path**: Removes visualization markings (explored nodes and path) but keeps walls, nodes, and checkpoints
+    **Clear Walls**: Removes all walls, but keeps visualization markings, nodes, and checkpoints
     **Clear All**: Resets the entire grid to its initial empty state
     **Reset Costs**: Resets all edge costs back to default value (1)`
   },

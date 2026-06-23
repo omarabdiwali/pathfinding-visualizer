@@ -1,13 +1,15 @@
 import { ALT_EXPLORED, ALT_NEXT, CURRENT, EMPTY_EVEN, EMPTY_ODD, END, EXPLORED, NEXT, PATH, POINT, START, WALL, clearGrid, getKey, getNeighbors, toggleBackdrop, updateRunning } from "@/algorithms/utils/constants";
-import { biDirectionalBFS } from "@/algorithms/pathfinding/bi-bfs";
-import { greedyBFS } from "@/algorithms/pathfinding/greedy-bfs";
-import { dijkstraAlgorithm } from "@/algorithms/pathfinding/dijkstra";
 import { useEffect, useRef, useState } from "react";
-import { aStar } from "@/algorithms/pathfinding/astar";
-import { depthFirstSearch } from "@/algorithms/pathfinding/dfs";
 import HelpModal from "@/algorithms/utils/HelpModal";
+
+import { dijkstraAlgorithm } from "@/algorithms/pathfinding/dijkstra";
+import { biDirectionalBFS } from "@/algorithms/pathfinding/bi-bfs";
+import { depthFirstSearch } from "@/algorithms/pathfinding/dfs";
+import { greedyBFS } from "@/algorithms/pathfinding/greedy-bfs";
+import { aStar } from "@/algorithms/pathfinding/astar";
+
 import { recursiveBacktracking, imperfectMaze } from "@/algorithms/maze/recursiveBacktracking";
-import primsAlgorithm from "@/algorithms/maze/primsAlgorithm";
+import { primsAlgorithm } from "@/algorithms/maze/primsAlgorithm";
 
 export default function Home() {
   const [startPos, setStartPos] = useState(null);
@@ -44,17 +46,22 @@ export default function Home() {
     intervalRef.current = null;
   }
 
-  const runAlgorithm = (algo) => {
-    if (endPos == null || startPos == null || running || maze) return;
+  const stopFocused = () => {
     if (focused != null) {
       setFocused(null);
       setFocusNeighbors([]);
       toggleBackdrop(width, height, false);
     }
+  }
 
+  const runAlgorithm = (algo) => {
+    if (endPos == null || startPos == null || running || maze) return;
+
+    stopFocused();
     updateRunning(true);
     setResult('');
     setRunning(true);
+    
     const positions = [startPos, ...checkpoints, endPos];
     const func = algo == 'dijkstra' ? dijkstraAlgorithm : algo == 'bi' ? biDirectionalBFS 
       : algo == 'greedy' ? greedyBFS : algo == 'aStar' ? aStar : depthFirstSearch;
@@ -68,12 +75,8 @@ export default function Home() {
 
   const generateMaze = async (algo) => {
     if (running || maze) return;
-    if (focused != null) {
-      setFocused(null);
-      setFocusNeighbors([]);
-      toggleBackdrop(width, height, false);
-    }
 
+    stopFocused();
     updateRunning(true);
     setMaze(true);
 
@@ -107,6 +110,7 @@ export default function Home() {
 
   const clearAllWalls = () => {
     if (running || maze) return;
+    stopFocused();
     clearWalls();
     setLastOp('clearWalls');
   }
@@ -121,6 +125,7 @@ export default function Home() {
 
   const clearCompleteGrid = () => {
     if (running || maze) return;
+    stopFocused();
     gridClear();
   }
 
@@ -235,9 +240,7 @@ export default function Home() {
     else if (status == 'changeCost') {
       if (el.classList.contains(WALL)) return;
       if (focused == newPos) {
-        setFocused(null);
-        setFocusNeighbors([]);
-        toggleBackdrop(width, height, false);
+        stopFocused();
         return;
       }
 
@@ -261,9 +264,7 @@ export default function Home() {
 
   const changeStatus = (value) => {
     if (status == value) return;
-    setFocused(null);
-    setFocusNeighbors([]);
-    toggleBackdrop(width, height, false);
+    stopFocused();
     setStatus(value);
   }
 

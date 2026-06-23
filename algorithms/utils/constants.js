@@ -152,8 +152,9 @@ export const drawPath = async (path, start, end) => {
 
 export const changeElColor = (pos, color, changePath=false) => {
     if (pos == null) return false;
+    
     const el = document.getElementById(`${pos}`);
-    if (el == null) return false;
+    if (el == null || el.classList.contains(color)) return false;
     if (el.classList.contains(START) || el.classList.contains(POINT) || el.classList.contains(END) || (!changePath && el.classList.contains(PATH))) return false;
 
     const isPath = el.classList.contains(PATH);

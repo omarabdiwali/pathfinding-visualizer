@@ -1,6 +1,6 @@
 import { changeElColor, continueRunning, EMPTY_EVEN, EMPTY_ODD, makeAllWalls, sleep } from "../utils/constants";
 
-const primsAlgorithm = async (width, height) => {
+export const primsAlgorithm = async (width, height) => {
     makeAllWalls(width, height);
     let maze = Array.from({ length: height }, () => Array(width).fill(1));
     let startX = Math.floor(Math.random() * width);
@@ -51,5 +51,3 @@ const primsAlgorithm = async (width, height) => {
         }
     }
 }
-
-export default primsAlgorithm;
