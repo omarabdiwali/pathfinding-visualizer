@@ -83,22 +83,17 @@ export const getPathCost = (path, costs) => {
     return cost;
 }
 
-export const clearGrid = (width, height, keepNodes) => {
+export const clearGrid = (width, height, keepNodes, clearWalls=false) => {
     for (let i = 0; i < width * height; i++) {
         const el = document.getElementById(`${i}`);
         if (el == null) continue;
-
-        if (keepNodes) {
-            const classes = el.classList;
-            if (classes.contains(EXPLORED) || classes.contains(NEXT) || classes.contains(ALT_EXPLORED) 
-                || classes.contains(ALT_NEXT) || classes.contains(PATH) || classes.contains(CURRENT)) {
-                removePreviousColor(el);
-                i % 2 == 0 ? el.classList.add(EMPTY_EVEN) : el.classList.add(EMPTY_ODD);
-            }
-        } else {
-            removePreviousColor(el);
-            i % 2 == 0 ? el.classList.add(EMPTY_EVEN) : el.classList.add(EMPTY_ODD);
-        }
+        
+        const classes = el.classList;
+        if (classes.contains(EMPTY_EVEN) || classes.contains(EMPTY_ODD)) continue;
+        if ((keepNodes && (classes.contains(START) || classes.contains(END) || classes.contains(POINT))) || (keepNodes && !clearWalls && classes.contains(WALL))) continue;
+        
+        removePreviousColor(el);
+        i % 2 == 0 ? el.classList.add(EMPTY_EVEN) : el.classList.add(EMPTY_ODD);
     }
 }
 
@@ -155,16 +150,16 @@ export const drawPath = async (path, start, end) => {
     }
 }
 
-export const changeElColor = (pos, color, allowPath=false) => {
+export const changeElColor = (pos, color, changePath=false) => {
     if (pos == null) return false;
     const el = document.getElementById(`${pos}`);
     if (el == null) return false;
-    if (el.classList.contains(START) || el.classList.contains(POINT) || el.classList.contains(END) || (!allowPath && el.classList.contains(PATH))) return false;
+    if (el.classList.contains(START) || el.classList.contains(POINT) || el.classList.contains(END) || (!changePath && el.classList.contains(PATH))) return false;
 
     const isPath = el.classList.contains(PATH);
     removePreviousColor(el);
     el.classList.add(color);
-    return allowPath && isPath;
+    return changePath && isPath;
 }
 
 export const removeNextColors = (remaining, color=EXPLORED) => {
@@ -213,19 +208,11 @@ export const addCommas = (num) => {
     return chars.reverse().join("");
 }
 
-export const clearWalls = (width, height) => {
-    for (let i = 0; i < width * height; i++) {
-        const el = document.getElementById(`${i}`);
-        if (!el.classList.contains(WALL)) continue;
-        el.classList.replace(WALL, i % 2 == 0 ? EMPTY_EVEN : EMPTY_ODD);
-    }
-}
-
 export const makeAllWalls = (width, height) => {
     for (let i = 0; i < height; i++) {
         for (let j = 0; j < width; j++) {
             const pos = i * width + j;
-            changeElColor(pos, WALL);
+            changeElColor(pos, WALL, true);
         }
     }
 }

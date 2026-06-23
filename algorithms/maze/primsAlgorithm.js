@@ -1,9 +1,7 @@
-import { changeElColor, clearGrid, continueRunning, EMPTY_EVEN, EMPTY_ODD, makeAllWalls, sleep } from "../utils/constants";
+import { changeElColor, continueRunning, EMPTY_EVEN, EMPTY_ODD, makeAllWalls, sleep } from "../utils/constants";
 
 const primsAlgorithm = async (width, height) => {
-    clearGrid(width, height, true);
     makeAllWalls(width, height);
-    
     let maze = Array.from({ length: height }, () => Array(width).fill(1));
     let startX = Math.floor(Math.random() * width);
     let startY = Math.floor(Math.random() * height);

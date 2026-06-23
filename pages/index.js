@@ -1,4 +1,4 @@
-import { ALT_EXPLORED, ALT_NEXT, CURRENT, EMPTY_EVEN, EMPTY_ODD, END, EXPLORED, NEXT, PATH, POINT, START, WALL, clearGrid, clearWalls, getKey, getNeighbors, toggleBackdrop, updateRunning } from "@/algorithms/utils/constants";
+import { ALT_EXPLORED, ALT_NEXT, CURRENT, EMPTY_EVEN, EMPTY_ODD, END, EXPLORED, NEXT, PATH, POINT, START, WALL, clearGrid, getKey, getNeighbors, toggleBackdrop, updateRunning } from "@/algorithms/utils/constants";
 import { biDirectionalBFS } from "@/algorithms/pathfinding/bi-bfs";
 import { greedyBFS } from "@/algorithms/pathfinding/greedy-bfs";
 import { dijkstraAlgorithm } from "@/algorithms/pathfinding/dijkstra";
@@ -75,6 +75,15 @@ export default function Home() {
     el.classList.remove(ALT_NEXT);
   }
 
+  const clearWalls = () => {
+    const squares = width * height;
+    for (let pos = 0; pos < squares; pos++) {
+      const el = document.getElementById(`${pos}`);
+      if (el == null || !el.classList.contains(WALL)) continue;
+      el.classList.replace(WALL, pos % 2 == 0 ? EMPTY_EVEN : EMPTY_ODD);
+    } 
+  }
+
   const gridClear = () => {
     setStartPos(null);
     setEndPos(null);
@@ -88,6 +97,12 @@ export default function Home() {
     gridClear();
   }
 
+  const stopMaze = () => {
+    if (!maze) return;
+    updateRunning(false);
+    setMaze(false);
+  }
+
   const stopRunning = () => {
     if (!running) return;
     updateRunning(false);
@@ -96,7 +111,7 @@ export default function Home() {
 
   const clickSquare = (e) => {
     if (running || maze) return;
-    if (lastOp == 'algorithm') clearGrid(width, height, true);
+    if (lastOp == 'algorithm' || lastOp == 'clearWalls') clearGrid(width, height, true);
     setLastOp('click');
 
     let el = e.target.id == '' ? e.target.parentElement : e.target;
@@ -232,12 +247,14 @@ export default function Home() {
     const func = algo == 'imperfect' ? imperfectMaze : algo == 'prims' ? primsAlgorithm : recursiveBacktracking;
     func(width, height).then(() => {
       setMaze(false);
+      setLastOp("maze");
     })
   }
 
   const clearAllWalls = () => {
     if (running || maze) return;
-    clearWalls(width, height);
+    clearWalls();
+    setLastOp('clearWalls');
   }
 
   useEffect(() => {
@@ -264,6 +281,7 @@ export default function Home() {
         setCheckpoints([]);
         setFocused(null);
         setFocusNeighbors([]);
+        setLastOp("resize");
         
         toggleBackdrop(newWidth, newHeight, false);
         setCosts({});
@@ -368,6 +386,14 @@ export default function Home() {
               >
                 Prim&#39;s Algorithm
               </button>
+              {maze && (
+                <button
+                  onClick={stopMaze}
+                  className="px-4 py-2 rounded text-sm font-medium cursor-pointer hover:bg-red-800 bg-red-700 transition-all hover:scale-105 text-white animate-pulse"
+                >
+                  Stop
+                </button>
+              )}
             </div>
           </div>
 
@@ -439,7 +465,7 @@ export default function Home() {
                   onClick={stopRunning}
                   className="px-4 py-2 rounded text-sm font-medium cursor-pointer hover:bg-red-800 bg-red-700 transition-all hover:scale-105 text-white animate-pulse"
                 >
-                  ■ Stop
+                  Stop
                 </button>
               )}
             </div>
