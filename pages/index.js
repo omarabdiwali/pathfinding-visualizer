@@ -46,9 +46,12 @@ export default function Home() {
 
   const runAlgorithm = (algo) => {
     if (endPos == null || startPos == null || running || maze) return;
-    setFocused(null);
-    setFocusNeighbors([]);
-    toggleBackdrop(width, height, false);
+    if (focused != null) {
+      setFocused(null);
+      setFocusNeighbors([]);
+      toggleBackdrop(width, height, false);
+    }
+
     updateRunning(true);
     setResult('');
     setRunning(true);
@@ -61,6 +64,24 @@ export default function Home() {
       setRunning(false);
       setLastOp('algorithm');
     });
+  }
+
+  const generateMaze = async (algo) => {
+    if (running || maze) return;
+    if (focused != null) {
+      setFocused(null);
+      setFocusNeighbors([]);
+      toggleBackdrop(width, height, false);
+    }
+
+    updateRunning(true);
+    setMaze(true);
+
+    const func = algo == 'imperfect' ? imperfectMaze : algo == 'prims' ? primsAlgorithm : recursiveBacktracking;
+    func(width, height).then(() => {
+      setMaze(false);
+      setLastOp("maze");
+    })
   }
 
   const clearSquare = (el) => {
@@ -82,6 +103,12 @@ export default function Home() {
       if (el == null || !el.classList.contains(WALL)) continue;
       el.classList.replace(WALL, pos % 2 == 0 ? EMPTY_EVEN : EMPTY_ODD);
     } 
+  }
+
+  const clearAllWalls = () => {
+    if (running || maze) return;
+    clearWalls();
+    setLastOp('clearWalls');
   }
 
   const gridClear = () => {
@@ -238,23 +265,6 @@ export default function Home() {
     setFocusNeighbors([]);
     toggleBackdrop(width, height, false);
     setStatus(value);
-  }
-
-  const generateMaze = async (algo) => {
-    if (running || maze) return;
-    setMaze(true);
-    updateRunning(true);
-    const func = algo == 'imperfect' ? imperfectMaze : algo == 'prims' ? primsAlgorithm : recursiveBacktracking;
-    func(width, height).then(() => {
-      setMaze(false);
-      setLastOp("maze");
-    })
-  }
-
-  const clearAllWalls = () => {
-    if (running || maze) return;
-    clearWalls();
-    setLastOp('clearWalls');
   }
 
   useEffect(() => {
