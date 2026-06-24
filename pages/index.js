@@ -552,7 +552,7 @@ export default function Home() {
 
                   return (
                     <div onClick={clickSquare} className={className} id={`${uniqPos}`} key={`${uniqPos}`}>
-                      <div className="text-center">{currentCost != '' ? currentCost : index != -1 ? index : ''}</div>
+                      <div className="text-center">{currentCost != '' ? currentCost : index != -1 ? index + 1 : ''}</div>
                     </div>
                   );
                 })}
