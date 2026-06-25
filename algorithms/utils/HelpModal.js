@@ -38,7 +38,9 @@ const helpSections = {
     **Imperfect Maze**
     Based on recursive backtracking but randomly removes some walls during rendering. Creates a maze with multiple paths and loops, making it less perfect and more complex.
     **Prim's Algorithm**
-    Begins with a single cell and grows the maze by randomly adding frontier cells. Creates a more organic, branching maze with many short dead ends.`
+    Begins with a single cell and grows the maze by randomly adding frontier cells. Creates a more organic, branching maze with many short dead ends.
+    **Kruskal's Algorithm**
+    Treats each cell as a separate set and randomly connects them by removing walls between disjoint sets. Results in a uniform, evenly distributed maze.`
   },
   visualization: {
     tab: "Animation",

@@ -10,6 +10,7 @@ import { aStar } from "@/algorithms/pathfinding/astar";
 
 import { recursiveBacktracking, imperfectMaze } from "@/algorithms/maze/recursiveBacktracking";
 import { primsAlgorithm } from "@/algorithms/maze/primsAlgorithm";
+import { kruskalsAlgorithm } from "@/algorithms/maze/kruskalsAlgorithm";
 
 export default function Home() {
   const [startPos, setStartPos] = useState(null);
@@ -80,7 +81,7 @@ export default function Home() {
     updateRunning(true);
     setMaze(true);
 
-    const func = algo == 'imperfect' ? imperfectMaze : algo == 'prims' ? primsAlgorithm : recursiveBacktracking;
+    const func = algo == 'imperfect' ? imperfectMaze : algo == 'prims' ? primsAlgorithm : algo == 'kruskals' ? kruskalsAlgorithm : recursiveBacktracking;
     func(width, height).then(() => {
       setMaze(false);
       setLastOp("maze");
@@ -396,6 +397,12 @@ export default function Home() {
                 className="px-3 py-2 rounded text-sm font-medium cursor-pointer hover:bg-blue-400 bg-blue-300 transition-all hover:scale-105 text-black"
               >
                 Prim&#39;s Algorithm
+              </button>
+              <button
+                onClick={() => generateMaze('kruskals')}
+                className="px-3 py-2 rounded text-sm font-medium cursor-pointer hover:bg-blue-400 bg-blue-300 transition-all hover:scale-105 text-black"
+              >
+                Kruskal&#39;s Algorithm
               </button>
               {maze && (
                 <button
