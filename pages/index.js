@@ -283,6 +283,8 @@ export default function Home() {
         if (onStart) {
           setWidth(newWidth);
           setHeight(newHeight);
+          prevWidth.current = window.innerWidth;
+          return;
         }
         
         updateRunning(false);
