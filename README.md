@@ -19,6 +19,7 @@ A web-based interactive visualization tool for popular search algorithms includi
   - Recursive Backtracking
   - Imperfect Maze
   - Prim's Algorithm
+  - Kruskal's Algorithm
 
 - **Interactive Grid Manipulation**
   - Place and move **Start** and **End** nodes
@@ -119,6 +120,9 @@ Based on recursive backtracking but randomly removes some walls during rendering
 ### Prim's Algorithm
 Begins with a single cell and grows the maze by randomly adding frontier cells. Creates a more organic, branching maze with many short dead ends.
 
+### Kruskal's Algorithm
+Treats each cell as a separate set and randomly connects them by removing walls between disjoint sets. Results in a uniform, evenly distributed maze.
+
 ## Tech Stack
 
 - **Frontend**: Next.js
@@ -138,6 +142,7 @@ search-algorithms/
 │   │   └── HelpModal.js                # Help modal with usage instructions
 |   ├── maze/
 │   │   ├── primsAlgorithm.js           # Prim's algorithm implementation
+│   │   ├── kruskalsAlgorithm.js        # Kruskal's algorithm implementation
 │   │   └── recursiveBacktracking.js    # Recursive backtracking & imperfect maze
 |   └── pathfinding/
 │       ├── di-bfs.js                   # Bi-directional BFS implementation
