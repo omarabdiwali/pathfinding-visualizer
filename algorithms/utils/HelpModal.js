@@ -40,7 +40,9 @@ const helpSections = {
     **Prim's Algorithm**
     Begins with a single cell and grows the maze by randomly adding frontier cells. Creates a more organic, branching maze with many short dead ends.
     **Kruskal's Algorithm**
-    Treats each cell as a separate set and randomly connects them by removing walls between disjoint sets. Results in a uniform, evenly distributed maze.`
+    Treats each cell as a separate set and randomly connects them by removing walls between disjoint sets. Results in a uniform, evenly distributed maze.
+    **Recursive Division**
+    Starts with an open grid and repeatedly divides it with walls containing random passages. Produces a structured maze with clear horizontal and vertical divisions.`
   },
   visualization: {
     tab: "Animation",

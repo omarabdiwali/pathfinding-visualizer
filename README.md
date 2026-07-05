@@ -20,6 +20,7 @@ A web-based interactive visualization tool for popular search algorithms includi
   - Imperfect Maze
   - Prim's Algorithm
   - Kruskal's Algorithm
+  - Recursive Division
 
 - **Interactive Grid Manipulation**
   - Place and move **Start** and **End** nodes
@@ -123,6 +124,9 @@ Begins with a single cell and grows the maze by randomly adding frontier cells. 
 ### Kruskal's Algorithm
 Treats each cell as a separate set and randomly connects them by removing walls between disjoint sets. Results in a uniform, evenly distributed maze.
 
+### Recursive Division
+Starts with an open grid and repeatedly divides it with walls containing random passages. Produces a structured maze with clear horizontal and vertical divisions.
+
 ## Tech Stack
 
 - **Frontend**: Next.js
@@ -143,6 +147,7 @@ search-algorithms/
 |   ├── maze/
 │   │   ├── primsAlgorithm.js           # Prim's algorithm implementation
 │   │   ├── kruskalsAlgorithm.js        # Kruskal's algorithm implementation
+│   │   ├── recursiveDivision.js        # Recursive division implementation
 │   │   └── recursiveBacktracking.js    # Recursive backtracking & imperfect maze
 |   └── pathfinding/
 │       ├── di-bfs.js                   # Bi-directional BFS implementation

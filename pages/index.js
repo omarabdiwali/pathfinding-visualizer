@@ -11,13 +11,36 @@ import { aStar } from "@/algorithms/pathfinding/astar";
 import { recursiveBacktracking, imperfectMaze } from "@/algorithms/maze/recursiveBacktracking";
 import { primsAlgorithm } from "@/algorithms/maze/primsAlgorithm";
 import { kruskalsAlgorithm } from "@/algorithms/maze/kruskalsAlgorithm";
+import { recursiveDivision } from "@/algorithms/maze/recursiveDivision";
+
+const classes = {
+  maze: "px-3 py-2 rounded text-sm font-medium cursor-pointer transition-all text-black",
+  algorithms: "px-3 py-2 rounded text-sm font-medium cursor-pointer transition-all text-black",
+  nodes: "px-3 py-2 rounded text-sm font-medium transition-all",
+  stop: "px-4 py-2 rounded text-sm font-medium cursor-pointer hover:bg-red-800 bg-red-700 transition-all hover:scale-105 text-white animate-pulse",
+  
+  nodeSelectedCl: 'opacity-50 cursor-not-allowed text-black',
+  nodeNormalCl: 'cursor-pointer hover:opacity-80 hover:scale-105 text-black',
+  nodeAltSelectedCl: 'bg-slate-700 cursor-not-allowed text-white',
+  nodeAltNormalCl: 'bg-slate-500 cursor-pointer hover:bg-slate-600 hover:scale-105 text-white',
+  
+  mazeNormalCl: "hover:bg-blue-400 bg-blue-300 hover:scale-105 transition-all",
+  mazeSelectedCl: "bg-blue-400 opacity-50",
+  
+  algorithmsNormalCl: "hover:bg-lime-600 bg-lime-500 hover:scale-105 transition-all",
+  algorithmsSelectedCl: "bg-lime-600 opacity-50",
+}
+
+const getGridActionsClass = (bgColor, textColor) => {
+  return `px-3 py-2 rounded text-sm font-medium cursor-pointer ${bgColor} transition-all hover:scale-105 text-${textColor}`
+}
 
 export default function Home() {
   const [startPos, setStartPos] = useState(null);
   const [endPos, setEndPos] = useState(null);
-  const [status, setStatus] = useState('start');
-  const [running, setRunning] = useState(false);
-  const [maze, setMaze] = useState(false);
+  const [tool, setTool] = useState('start');
+  const [running, setRunning] = useState(null);
+  const [maze, setMaze] = useState(null);
   const [lastOp, setLastOp] = useState("");
   const [checkpoints, setCheckpoints] = useState([]);
   const [result, setResult] = useState('');
@@ -33,13 +56,25 @@ export default function Home() {
   const gridRef = useRef(null);
   const intervalRef = useRef(null);
 
+  const getActiveButtonClass = (variable, target) => {
+    if (variable == 'maze') {
+      return maze == target ? classes.mazeSelectedCl : classes.mazeNormalCl;
+    } else if (variable == 'algorithms') {
+      return running == target ? classes.algorithmsSelectedCl : classes.algorithmsNormalCl;
+    } else if (variable == 'tool' || variable == 'tool-alt') {
+      const normal = variable == 'tool' ? classes.nodeNormalCl : classes.nodeAltNormalCl;
+      const selected = variable == 'tool' ? classes.nodeSelectedCl : classes.nodeAltSelectedCl;
+      return tool == target ? selected : normal;
+    }
+  }
+
   const onHoldDown = () => {
-    if (intervalRef.current || running || (status != 'wall' && status != 'eraser')) return;
+    if (intervalRef.current || running || (tool != 'wall' && tool != 'eraser')) return;
     intervalRef.current = true;
   }
 
   const onMove = (e) => {
-    if (!intervalRef.current || running || (status != 'wall' && status != 'eraser')) return;
+    if (!intervalRef.current || running || (tool != 'wall' && tool != 'eraser')) return;
     clickSquare(e);
   }
 
@@ -61,7 +96,7 @@ export default function Home() {
     stopFocused();
     updateRunning(true);
     setResult('');
-    setRunning(true);
+    setRunning(algo);
     
     const positions = [startPos, ...checkpoints, endPos];
     const func = algo == 'dijkstra' ? dijkstraAlgorithm : algo == 'bi' ? biDirectionalBFS 
@@ -69,21 +104,22 @@ export default function Home() {
 
     func(positions, width, height, costs).then(res => {
       setResult(res);
-      setRunning(false);
+      setRunning(null);
       setLastOp('algorithm');
     });
   }
 
-  const generateMaze = async (algo) => {
+  const generateMaze = (algo) => {
     if (running || maze) return;
 
     stopFocused();
     updateRunning(true);
-    setMaze(true);
+    setMaze(algo);
 
-    const func = algo == 'imperfect' ? imperfectMaze : algo == 'prims' ? primsAlgorithm : algo == 'kruskals' ? kruskalsAlgorithm : recursiveBacktracking;
+    const func = algo == 'imperfect' ? imperfectMaze : algo == 'prims' ? primsAlgorithm 
+    : algo == 'kruskals' ? kruskalsAlgorithm : algo == 'division' ? recursiveDivision : recursiveBacktracking;
     func(width, height).then(() => {
-      setMaze(false);
+      setMaze(null);
       setLastOp("maze");
     })
   }
@@ -139,7 +175,7 @@ export default function Home() {
   const stopRunning = () => {
     if (!running) return;
     updateRunning(false);
-    setRunning(false);
+    setRunning(null);
   }
 
   const clickSquare = (e) => {
@@ -150,7 +186,7 @@ export default function Home() {
     let el = e.target.id == '' ? e.target.parentElement : e.target;
     let newPos = parseInt(el.id);
 
-    if (status == 'start') {
+    if (tool == 'start') {
       if (startPos == newPos) return;
 
       if (startPos != null) {
@@ -174,7 +210,7 @@ export default function Home() {
       }
       setStartPos(newPos);
     } 
-    else if (status == 'end') {
+    else if (tool == 'end') {
       if (endPos == newPos) return;
 
       if (endPos != null) {
@@ -198,8 +234,8 @@ export default function Home() {
       }
       setEndPos(newPos);
     }
-    else if (status == 'wall' || status == 'eraser') {
-      const newNode = status == 'wall' ? WALL : newPos % 2 == 0 ? EMPTY_EVEN : EMPTY_ODD;
+    else if (tool == 'wall' || tool == 'eraser') {
+      const newNode = tool == 'wall' ? WALL : newPos % 2 == 0 ? EMPTY_EVEN : EMPTY_ODD;
 
       if (startPos == newPos) {
         el.classList.replace(START, newNode);
@@ -220,7 +256,7 @@ export default function Home() {
         el.classList.add(newNode);
       }
     }
-    else if (status == 'checkpoint') {
+    else if (tool == 'checkpoint') {
       if (checkpoints.includes(newPos)) return;
 
       if (newPos == startPos) {
@@ -238,7 +274,7 @@ export default function Home() {
       prev.push(newPos);
       setCheckpoints(prev);
     }
-    else if (status == 'changeCost') {
+    else if (tool == 'changeCost') {
       if (el.classList.contains(WALL)) return;
       if (focused == newPos) {
         stopFocused();
@@ -263,10 +299,10 @@ export default function Home() {
     }
   }
 
-  const changeStatus = (value) => {
-    if (status == value) return;
+  const changeTool = (value) => {
+    if (tool == value) return;
     stopFocused();
-    setStatus(value);
+    setTool(value);
   }
 
   useEffect(() => {
@@ -288,7 +324,7 @@ export default function Home() {
         
         updateRunning(false);
         
-        setRunning(false);
+        setRunning(null);
         setStartPos(null);
         setEndPos(null);
         setCheckpoints([]);
@@ -333,45 +369,15 @@ export default function Home() {
           <div>
             <p className="text-xs uppercase tracking-wider text-slate-400 mb-2 font-semibold">Node Tools</p>
             <div className="flex flex-wrap gap-2">
-              <button
-                onClick={() => changeStatus('start')}
-                className={`px-3 py-2 rounded text-sm font-medium transition-all ${status === 'start' ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:opacity-80 hover:scale-105'} ${START} text-black`}
-              >
-                Start
-              </button>
-              <button
-                onClick={() => changeStatus('end')}
-                className={`px-3 py-2 rounded text-sm font-medium transition-all ${status === 'end' ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:opacity-80 hover:scale-105'} ${END} text-black`}
-              >
-                End
-              </button>
-              <button
-                onClick={() => changeStatus('wall')}
-                className={`px-3 py-2 rounded text-sm font-medium transition-all ${status === 'wall' ? 'bg-slate-700 cursor-not-allowed' : 'bg-slate-500 cursor-pointer hover:bg-slate-600 hover:scale-105'} text-white`}
-              >
-                Wall
-              </button>
-              <button
-                onClick={() => changeStatus('checkpoint')}
-                className={`px-3 py-2 rounded text-sm font-medium transition-all ${status === 'checkpoint' ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:opacity-80 hover:scale-105'} ${POINT} text-black`}
-              >
-                Checkpoint
-              </button>
-              <button
-                onClick={() => changeStatus('eraser')}
-                className={`px-3 py-2 rounded text-sm font-medium transition-all ${status === 'eraser' ? 'bg-slate-700 cursor-not-allowed' : 'bg-slate-500 cursor-pointer hover:bg-slate-600 hover:scale-105'} text-white`}
-              >
-                Eraser
-              </button>
-              <button
-                onClick={() => changeStatus('changeCost')}
-                className={`px-3 py-2 rounded text-sm font-medium transition-all ${status === 'changeCost' ? 'bg-slate-700 cursor-not-allowed' : 'bg-slate-500 cursor-pointer hover:bg-slate-600 hover:scale-105'} text-white`}
-              >
-                Cost
-              </button>
+              <button onClick={() => changeTool('start')} className={`${START} ${classes.nodes} ${getActiveButtonClass('tool', 'start')}`}>Start</button>
+              <button onClick={() => changeTool('end')} className={`${END} ${classes.nodes} ${getActiveButtonClass('tool', 'end')}`}>End</button>
+              <button onClick={() => changeTool('wall')} className={`${classes.nodes} ${getActiveButtonClass('tool-alt', 'wall')}`}>Wall</button>
+              <button onClick={() => changeTool('checkpoint')} className={`${POINT} ${classes.nodes} ${getActiveButtonClass('tool', 'checkpoint')}`}>Checkpoint</button>
+              <button onClick={() => changeTool('eraser')} className={`${classes.nodes} ${getActiveButtonClass('tool-alt', 'eraser')}`}>Eraser</button>
+              <button onClick={() => changeTool('changeCost')} className={`${classes.nodes} ${getActiveButtonClass('tool-alt', 'changeCost')}`}>Cost</button>
               <button
                 onClick={() => setShowHelp(true)}
-                className={`px-3 py-2 rounded text-sm font-medium transition-all bg-transparent border border-slate-600 hover:scale-105 text-white cursor-pointer`}
+                className={`${classes.nodes} bg-transparent border border-slate-600 hover:scale-105 text-white cursor-pointer`}
               >
                 Help
               </button>
@@ -382,67 +388,43 @@ export default function Home() {
             <p className="text-xs uppercase tracking-wider text-slate-400 mb-2 font-semibold">Maze Generation</p>
             <div className="flex flex-wrap gap-2">
               <button
-                onClick={() => generateMaze('recursive')}
-                className="px-3 py-2 rounded text-sm font-medium cursor-pointer hover:bg-blue-400 bg-blue-300 transition-all hover:scale-105 text-black"
+                onClick={() => generateMaze('recursive')} className={`${classes.maze} ${getActiveButtonClass('maze', 'recursive')}`}
               >
                 Recursive Backtracking
               </button>
               <button
-                onClick={() => generateMaze('imperfect')}
-                className="px-3 py-2 rounded text-sm font-medium cursor-pointer hover:bg-blue-400 bg-blue-300 transition-all hover:scale-105 text-black"
+                onClick={() => generateMaze('imperfect')} className={`${classes.maze} ${getActiveButtonClass('maze', 'imperfect')}`}
               >
                 Imperfect Maze
               </button>
               <button
-                onClick={() => generateMaze('prims')}
-                className="px-3 py-2 rounded text-sm font-medium cursor-pointer hover:bg-blue-400 bg-blue-300 transition-all hover:scale-105 text-black"
+                onClick={() => generateMaze('prims')} className={`${classes.maze} ${getActiveButtonClass('maze', 'prims')}`}
               >
                 Prim&#39;s Algorithm
               </button>
               <button
-                onClick={() => generateMaze('kruskals')}
-                className="px-3 py-2 rounded text-sm font-medium cursor-pointer hover:bg-blue-400 bg-blue-300 transition-all hover:scale-105 text-black"
+                onClick={() => generateMaze('kruskals')} className={`${classes.maze} ${getActiveButtonClass('maze', 'kruskals')}`}
               >
                 Kruskal&#39;s Algorithm
               </button>
-              {maze && (
-                <button
-                  onClick={stopMaze}
-                  className="px-4 py-2 rounded text-sm font-medium cursor-pointer hover:bg-red-800 bg-red-700 transition-all hover:scale-105 text-white animate-pulse"
-                >
-                  Stop
-                </button>
-              )}
+              <button
+                onClick={() => generateMaze('division')} className={`${classes.maze} ${getActiveButtonClass('maze', 'division')}`}
+              >
+                Recursive Division
+              </button>
             </div>
           </div>
 
           <div>
             <p className="text-xs uppercase tracking-wider text-slate-400 mb-2 font-semibold">Grid Actions</p>
             <div className="flex flex-wrap gap-2">
-              <button
-                onClick={() => setCosts({})}
-                className="px-3 py-2 rounded text-sm font-medium cursor-pointer hover:bg-pink-600 bg-pink-500 transition-all hover:scale-105 text-white"
-              >
-                Reset Costs
-              </button>
-              <button
-                onClick={() => !running && clearGrid(width, height, true)}
-                className="px-3 py-2 rounded text-sm font-medium cursor-pointer hover:bg-red-400 bg-red-300 transition-all hover:scale-105 text-black"
-              >
-                Clear Path
-              </button>
-              <button
-                onClick={clearAllWalls}
-                className="px-3 py-2 rounded text-sm font-medium cursor-pointer hover:bg-red-500 bg-red-400 transition-all hover:scale-105 text-black"
-              >
-                Clear Walls
-              </button>
-              <button
-                onClick={clearCompleteGrid}
-                className="px-3 py-2 rounded text-sm font-medium cursor-pointer hover:bg-red-600 bg-red-500 transition-all hover:scale-105 text-white"
-              >
-                Clear All
-              </button>
+              <button onClick={() => setCosts({})} className={getGridActionsClass('bg-pink-500', 'white')}>Reset Costs</button>
+              <button onClick={() => !running && clearGrid(width, height, true)} className={getGridActionsClass('bg-red-300', 'black')}>Clear Path</button>
+              <button onClick={clearAllWalls} className={getGridActionsClass('bg-red-400', 'black')}>Clear Walls</button>
+              <button onClick={clearCompleteGrid} className={getGridActionsClass('bg-red-500', 'white')}>Clear All</button>
+              {(maze || running) && (
+                <button onClick={maze ? stopMaze : stopRunning} className={classes.stop}>Stop</button>
+              )}
             </div>
           </div>
 
@@ -450,57 +432,44 @@ export default function Home() {
             <p className="text-xs uppercase tracking-wider text-slate-400 mb-2 font-semibold">Algorithms</p>
             <div className="flex flex-wrap gap-2">
               <button
-                onClick={() => runAlgorithm('dijkstra')}
-                className="px-3 py-2 rounded text-sm font-medium cursor-pointer hover:bg-lime-600 bg-lime-500 transition-all hover:scale-105 text-black"
+                onClick={() => runAlgorithm('dijkstra')} className={`${classes.algorithms} ${getActiveButtonClass('algorithms', 'dijkstra')}`}
               >
                 Dijkstra
               </button>
               <button
-                onClick={() => runAlgorithm('bi')}
-                className="px-3 py-2 rounded text-sm font-medium cursor-pointer hover:bg-lime-600 bg-lime-500 transition-all hover:scale-105 text-black"
+                onClick={() => runAlgorithm('bi')} className={`${classes.algorithms} ${getActiveButtonClass('algorithms', 'bi')}`}
               >
                 Bi-BFS
               </button>
               <button
-                onClick={() => runAlgorithm('dfs')}
-                className="px-3 py-2 rounded text-sm font-medium cursor-pointer hover:bg-lime-600 bg-lime-500 transition-all hover:scale-105 text-black"
+                onClick={() => runAlgorithm('dfs')} className={`${classes.algorithms} ${getActiveButtonClass('algorithms', 'dfs')}`}
               >
                 DFS
               </button>
               <button
-                onClick={() => runAlgorithm('greedy')}
-                className="px-3 py-2 rounded text-sm font-medium cursor-pointer hover:bg-lime-600 bg-lime-500 transition-all hover:scale-105 text-black"
+                onClick={() => runAlgorithm('greedy')} className={`${classes.algorithms} ${getActiveButtonClass('algorithms', 'greedy')}`}
               >
                 Greedy BFS
               </button>
               <button
-                onClick={() => runAlgorithm('aStar')}
-                className="px-3 py-2 rounded text-sm font-medium cursor-pointer hover:bg-lime-600 bg-lime-500 transition-all hover:scale-105 text-black"
+                onClick={() => runAlgorithm('aStar')} className={`${classes.algorithms} ${getActiveButtonClass('algorithms', 'aStar')}`}
               >
                 A*
               </button>
-              {running && (
-                <button
-                  onClick={stopRunning}
-                  className="px-4 py-2 rounded text-sm font-medium cursor-pointer hover:bg-red-800 bg-red-700 transition-all hover:scale-105 text-white animate-pulse"
-                >
-                  Stop
-                </button>
-              )}
             </div>
           </div>
         </div>
 
         <div className="flex-1 flex flex-col space-y-2 mt-4 lg:mt-0">
           <p className="text-xs uppercase tracking-wider text-slate-400 font-semibold">Results</p>
-
-          <div className="bg-slate-800 border border-slate-600 rounded-lg p-4 text-center">
+          <div className="bg-slate-800 content-center flex-1 border border-slate-600 rounded-lg p-4 text-center">
             <p className="text-xs uppercase tracking-wider text-slate-400 mb-1">Algorithm</p>
             <p className="text-xl font-bold text-white">
               {result?.algorithm || '-'}
             </p>
           </div>
-
+          
+          <div className="flex-1 content-center">
           {result?.pathExists === false ? (
             <div className="bg-red-900/40 border border-red-500/50 rounded-lg p-6 text-center">
               <p className="text-lg font-semibold text-red-400">
@@ -534,15 +503,13 @@ export default function Home() {
               </div>
             </div>
           )}
+          </div>
         </div>
       </div>
       
       <center>
         <div
-          onMouseDown={onHoldDown}
-          onMouseUp={onRelease}
-          onMouseLeave={onRelease}
-          onMouseMove={onMove}
+          onMouseDown={onHoldDown} onMouseUp={onRelease} onMouseLeave={onRelease} onMouseMove={onMove}
           ref={gridRef}
           id="grid"
           className="border border-slate-600 rounded-lg overflow-hidden inline-block"
