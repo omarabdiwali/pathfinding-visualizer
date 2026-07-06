@@ -14,21 +14,21 @@ import { kruskalsAlgorithm } from "@/algorithms/maze/kruskalsAlgorithm";
 import { recursiveDivision } from "@/algorithms/maze/recursiveDivision";
 
 const classes = {
-  maze: "px-3 py-2 rounded text-sm font-medium cursor-pointer transition-all text-black",
-  algorithms: "px-3 py-2 rounded text-sm font-medium cursor-pointer transition-all text-black",
+  maze: "px-3 py-2 rounded text-sm font-medium transition-all text-black",
+  algorithms: "px-3 py-2 rounded text-sm font-medium transition-all text-black",
   nodes: "px-3 py-2 rounded text-sm font-medium transition-all",
   stop: "px-4 py-2 rounded text-sm font-medium cursor-pointer hover:bg-red-800 bg-red-700 transition-all hover:scale-105 text-white animate-pulse",
   
-  nodeSelectedCl: 'opacity-50 cursor-not-allowed text-black',
+  nodeSelectedCl: 'opacity-50 cursor-default text-black',
   nodeNormalCl: 'cursor-pointer hover:opacity-80 hover:scale-105 text-black',
-  nodeAltSelectedCl: 'bg-slate-700 cursor-not-allowed text-white',
+  nodeAltSelectedCl: 'bg-slate-700 cursor-default text-white',
   nodeAltNormalCl: 'bg-slate-500 cursor-pointer hover:bg-slate-600 hover:scale-105 text-white',
   
-  mazeNormalCl: "hover:bg-blue-400 bg-blue-300 hover:scale-105 transition-all",
-  mazeSelectedCl: "bg-blue-400 opacity-50",
+  mazeNormalCl: "hover:bg-blue-400 bg-blue-300 hover:scale-105 transition-all cursor-pointer",
+  mazeSelectedCl: "bg-blue-400 opacity-50 cursor-default",
   
-  algorithmsNormalCl: "hover:bg-lime-600 bg-lime-500 hover:scale-105 transition-all",
-  algorithmsSelectedCl: "bg-lime-600 opacity-50",
+  algorithmsNormalCl: "hover:bg-lime-600 bg-lime-500 hover:scale-105 transition-all cursor-pointer",
+  algorithmsSelectedCl: "bg-lime-600 opacity-50 cursor-default",
 }
 
 const getGridActionsClass = (bgColor, textColor) => {
