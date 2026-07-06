@@ -43,7 +43,7 @@ export default function Home() {
   const [maze, setMaze] = useState(null);
   const [lastOp, setLastOp] = useState("");
   const [checkpoints, setCheckpoints] = useState([]);
-  const [result, setResult] = useState('');
+  const [result, setResult] = useState({});
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);
   const [focused, setFocused] = useState(null);
@@ -308,22 +308,24 @@ export default function Home() {
   useEffect(() => {
     let timeoutId = null;
     const onResize = (onStart=false) => {
-      if (prevWidth.current == window.innerWidth) return;
+      const docWidth = document.documentElement.clientWidth;
+      const docHeight = document.documentElement.clientHeight;
+      if (prevWidth.current == docWidth) return;
       
       const resizeFunction = () => {
-        let newWidth = Math.floor(window.innerWidth / 20);
-        let newHeight = Math.floor(window.innerHeight / 24);
+        let newWidth = Math.floor(docWidth / 20);
+        let newHeight = Math.floor(docHeight / 24);
         newWidth = newWidth % 2 == 0 ? newWidth - 1 : newWidth;
         newHeight = newHeight % 2 == 0 ? newHeight - 1 : newHeight;
 
-        if (onStart) {
-          setWidth(newWidth);
-          setHeight(newHeight);
-          prevWidth.current = window.innerWidth;
+        if (newWidth * newHeight > 10000) {
+          newHeight = Math.min(newHeight, 99);
+          if (newWidth * newHeight > 10000) {
+            newWidth = Math.min(newWidth, 99);
+          }
         }
-        
-        updateRunning(false);
-        
+
+        updateRunning(false);  
         setRunning(null);
         setStartPos(null);
         setEndPos(null);
@@ -337,7 +339,7 @@ export default function Home() {
         setWidth(newWidth);
         setHeight(newHeight);
         clearGrid(newWidth, newHeight, false);
-        prevWidth.current = window.innerWidth;
+        prevWidth.current = docWidth;
       }
 
       if (onStart) {
@@ -481,23 +483,23 @@ export default function Home() {
             </div>
           ) : (
             <div className="grid grid-cols-3 gap-2">
-              <div className="bg-slate-800 border border-slate-600 rounded-lg p-4 text-center">
-                <p className="text-xs uppercase tracking-wider text-slate-400 mb-1">Nodes Visited</p>
-                <p className="text-2xl font-bold text-cyan-400">
+              <div className="bg-slate-800 border flex flex-col justify-center border-slate-600 rounded-lg p-4 text-center">
+                <p className="text-xs uppercase tracking-wider text-slate-400 mb-1">Visited</p>
+                <p title={result?.nodesTraversed ?? ''} className="text-2xl font-bold text-cyan-400 truncate overflow-hidden whitespace-nowrap">
                   {result?.nodesTraversed ?? '-'}
                 </p>
               </div>
 
-              <div className="bg-slate-800 border border-slate-600 rounded-lg p-4 text-center">
-                <p className="text-xs uppercase tracking-wider text-slate-400 mb-1"># of Moves</p>
-                <p className="text-2xl font-bold text-amber-400">
+              <div className="bg-slate-800 border flex flex-col justify-center border-slate-600 rounded-lg p-4 text-center">
+                <p className="text-xs uppercase tracking-wider text-slate-400 mb-1">Moves</p>
+                <p title={result?.moves ?? ''} className="text-2xl font-bold text-amber-400 truncate overflow-hidden whitespace-nowrap">
                   {result?.moves ?? '-'}
                 </p>
               </div>
 
-              <div className="bg-slate-800 border border-slate-600 rounded-lg p-4 text-center">
-                <p className="text-xs uppercase tracking-wider text-slate-400 mb-1">Path Cost</p>
-                <p className="text-2xl font-bold text-emerald-400">
+              <div className="bg-slate-800 border flex flex-col justify-center border-slate-600 rounded-lg p-4 text-center">
+                <p className="text-xs uppercase tracking-wider text-slate-400 mb-1">Cost</p>
+                <p title={result?.totalCost ?? ''} className="text-2xl font-bold text-emerald-400 truncate overflow-hidden whitespace-nowrap">
                   {result?.totalCost ?? '-'}
                 </p>
               </div>

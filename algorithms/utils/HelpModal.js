@@ -61,9 +61,9 @@ const helpSections = {
     **Checkpoints**: Intermediate destinations (Sky Blue)
     \n\n
     **Results Display**
-    **Nodes Visited**: Total count of nodes visited to find the path
-    **# Of Moves**: The amount of nodes traveled to complete the path
-    **Total Cost**: Cummulative edge cost of the path
+    **Visited**: Total count of nodes visited to find the path
+    **Moves**: The amount of nodes traveled to complete the path
+    **Cost**: Cummulative edge cost of the path
     \n\n    
     **Stop Button**: Press the red "Stop" button to halt execution at any time`
   },
